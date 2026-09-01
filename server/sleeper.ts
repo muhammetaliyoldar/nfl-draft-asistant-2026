@@ -7,16 +7,53 @@ const sleeper = async (url: string) => {
   return r.json() as Promise<any>;
 };
 
+export interface UserLeague {
+  leagueId: string;
+  name: string;
+  season: string;
+  scoringType: 'ppr' | 'half_ppr' | 'standard' | 'custom';
+  receptionPoints: number;
+  totalRosters: number;
+  rosterPositions: string[];
+  draftId?: string;
+  draftStatus?: string;
+}
+
+export async function getUserLeagues(username: string, season = '2025'): Promise<UserLeague[]> {
+  const user = await sleeper(`/user/${username}`);
+  if (!user?.user_id) throw new Error('Kullanıcı bulunamadı.');
+  const leagues = await sleeper(`/user/${user.user_id}/leagues/nfl/${season}`);
+  return leagues
+    .filter((l: any) => l.status !== 'pre_draft' || l.draft_id)
+    .map((l: any) => {
+      const reception = Number(l.scoring_settings?.rec ?? 1);
+      const scoringType = reception >= .75 ? 'ppr' : reception >= .25 ? 'half_ppr' : reception === 0 ? 'standard' : 'custom';
+      return {
+        leagueId: l.league_id,
+        name: l.name,
+        season: l.season,
+        scoringType,
+        receptionPoints: reception,
+        totalRosters: l.total_rosters,
+        rosterPositions: l.roster_positions ?? [],
+        draftId: l.draft_id,
+        draftStatus: l.status,
+      };
+    });
+}
+
 export async function connect(input: { leagueId?: string; draftId?: string; username?: string; myRosterId?: number }) {
   let league: any = null; let draft: any;
   if (input.leagueId) {
     league = await sleeper(`/league/${input.leagueId}`);
     const drafts = await sleeper(`/league/${input.leagueId}/drafts`);
-    draft = drafts.find((d: any) => d.status !== 'complete') ?? drafts[0];
-    if (!draft) throw new Error('Bu lig için draft bulunamadı.');
+    const activeDraft = drafts.find((d: any) => d.status !== 'complete');
+    if (!activeDraft) throw new Error('Bu ligde aktif (devam eden) draft yok. Tüm draftlar tamamlanmış. Mock Draft Testi kullanın.');
+    draft = activeDraft;
   } else if (input.draftId) draft = await sleeper(`/draft/${input.draftId}`);
   else throw new Error('League ID veya Draft ID gerekli.');
   const detailed = await sleeper(`/draft/${draft.draft_id}`);
+  if (detailed.status === 'complete') throw new Error('Bu draft zaten tamamlanmış. Canlı takip yapılamaz.');
   let myUserId: string | undefined;
   let myRosterId = input.myRosterId;
   const users = detailed.league_id ? await sleeper(`/league/${detailed.league_id}/users`) : [];

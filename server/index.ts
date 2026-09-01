@@ -5,9 +5,10 @@ import { clearManualPicks, getEntries, getManualPicks, getPlayers, replaceEntrie
 import { importRankings, resolveEntries } from './import-rankings.js';
 import { parseAllMarkdown } from './markdown.js';
 import { consensus } from './consensus.js';
-import { recommendations } from './recommend.js';
-import { connect, getPicks, publicState } from './sleeper.js';
+import { recommendations, recommendationsForPick, draftSlotForPick } from './recommend.js';
+import { connect, getPicks, publicState, getUserLeagues, type UserLeague } from './sleeper.js';
 import type { DraftPick, LeagueConfig } from './types.js';
+const pickSlot = draftSlotForPick;
 
 const app = express(); app.use(express.json());
 let config: LeagueConfig | null = null;
@@ -38,6 +39,7 @@ async function liveState() {
 }
 
 app.get('/api/health', (_req, res) => res.json({ ok: true, ready: getEntries().length > 0, players: getPlayers().length, entries: getEntries().length }));
+app.get('/api/user-leagues', async (req, res, next) => { try { const username = String(req.query.username ?? '').trim(); if (!username) return res.status(400).json({ error: 'username gerekli' }); const leagues = await getUserLeagues(username); res.json(leagues); } catch (e) { next(e); } });
 app.post('/api/import', async (_req, res, next) => { try { dataLoad = importRankings(false); res.json(await dataLoad); } catch (e) { next(e); } });
 app.get('/api/review', (_req, res) => {
   const players = getPlayers();
@@ -59,17 +61,22 @@ app.post('/api/review', (req, res) => {
   saveAlias(alias, sleeperId); replaceEntries(resolveEntries(parseAllMarkdown(), getPlayers())); res.json({ ok: true, message: 'Eşleşme kaydedildi ve ranking güncellendi.' });
 });
 app.get('/api/consensus', (req, res) => res.json(consensus(String(req.query.scoringType ?? 'ppr'))));
-app.post('/api/connect', async (req, res, next) => { try { await ensureRankings(); config = (await connect(req.body)).config; demoFinished = false; cachedPicks = []; lastFetch = 0; res.json(await liveState()); } catch (e) { next(e); } });
-app.post('/api/demo', async (_req, res) => {
+app.post('/api/connect', async (req, res, next) => { try { await ensureRankings(); const { leagueId, draftId, username, myRosterId } = req.body ?? {}; if (leagueId) { config = (await connect({ leagueId, username, myRosterId })).config; } else if (draftId) { config = (await connect({ draftId, username, myRosterId })).config; } else { throw new Error('League ID veya Draft ID gerekli'); } demoFinished = false; cachedPicks = []; lastFetch = 0; res.json(await liveState()); } catch (e) { next(e); } });
+app.post('/api/demo', async (req, res) => {
   await ensureRankings();
-  const teams = 12; const slotToRosterId = Object.fromEntries(Array.from({ length: teams }, (_, i) => [String(i + 1), i + 1]));
-  config = { draftId: 'local-demo', name: 'Local Demo Draft', teams, rounds: 15, rosterPositions: ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'], scoringType: 'ppr', receptionPoints: 1, pickTimer: 90, myRosterId: 1, draftOrder: {}, slotToRosterId, rosterNames: Object.fromEntries(Array.from({ length: teams }, (_, i) => [String(i + 1), i === 0 ? 'Senin Takımın' : `Demo Takım ${i + 1}`])), mode: 'demo' };
-  demoFinished = false; cachedPicks = []; clearManualPicks('local-demo'); lastFetch = Date.now(); res.json(await liveState());
+  const { leagueId, username, scoringType = 'ppr', receptionPoints = 1, rosterPositions = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'], totalRosters = 12 } = req.body ?? {};
+  const teams = totalRosters;
+  const slotToRosterId = Object.fromEntries(Array.from({ length: teams }, (_, i) => [String(i + 1), i + 1]));
+  const draftId = leagueId ? `mock-${leagueId}` : 'local-demo';
+  const name = leagueId ? `Mock Draft: ${leagueId}` : 'Local Demo Draft';
+  config = { draftId, name, teams, rounds: 15, rosterPositions, scoringType, receptionPoints, pickTimer: 90, myRosterId: 1, draftOrder: {}, slotToRosterId, rosterNames: Object.fromEntries(Array.from({ length: teams }, (_, i) => [String(i + 1), i === 0 ? 'Senin Takımın' : `Mock Takım ${i + 1}`])), mode: 'demo' };
+  demoFinished = false; cachedPicks = []; clearManualPicks(draftId); lastFetch = Date.now(); res.json(await liveState());
 });
 app.post('/api/demo/reset', async (_req, res, next) => { try { if (!config || config.mode !== 'demo') throw new Error('Önce Demo draftı aç.'); demoFinished = false; cachedPicks = []; clearManualPicks('local-demo'); res.json(await liveState()); } catch (e) { next(e); } });
 app.post('/api/demo/finish', async (_req, res, next) => { try { if (!config || config.mode !== 'demo') throw new Error('Gerçek canlı draft sıfırlanamaz veya elle bitirilemez.'); demoFinished = true; res.json(await liveState()); } catch (e) { next(e); } });
 app.get('/api/draft-state', async (_req, res, next) => { try { res.json(await liveState()); } catch (e) { next(e); } });
 app.get('/api/recommendations', async (_req, res, next) => { try { const state = await liveState(); res.json(recommendations(state.picks, state.config)); } catch (e) { next(e); } });
+app.get('/api/recommendations-for-pick', async (req, res, next) => { try { const state = await liveState(); const pickNo = Number(req.query.pickNo ?? state.picks.length + 1); res.json(recommendationsForPick(state.picks, state.config, pickNo)); } catch (e) { next(e); } });
 app.get('/api/board-suggestions', async (_req, res, next) => {
   try {
     const state = await liveState(); const suggestions: Record<string, unknown> = {};
@@ -80,6 +87,8 @@ app.get('/api/board-suggestions', async (_req, res, next) => {
     res.json(suggestions);
   } catch (e) { next(e); }
 });
+app.post('/api/auto-pick', async (req, res, next) => { try { const state = await liveState(); const { rosterId } = req.body ?? {}; if (!rosterId) return res.status(400).json({ error: 'rosterId gerekli' }); const result = recommendations(state.picks, { ...state.config, myRosterId: Number(rosterId) }); const top = result.recommendations[0]; if (!top) return res.status(404).json({ error: 'Oyuncu kalmadı' }); res.json({ playerId: top.player.sleeperId, playerName: top.player.fullName, position: top.player.position, team: top.player.team, consensusRank: top.player.consensusRank, reason: top.reason }); } catch (e) { next(e); } });
+app.post('/api/mock-simulate', async (req, res, next) => { try { const state = await liveState(); if (state.config.mode !== 'demo') return res.status(400).json({ error: 'Sadece demo modunda çalışır' }); let currentPicks = [...state.picks]; const config = state.config; const totalPicks = config.teams * config.rounds; for (let pickNo = currentPicks.length + 1; pickNo <= totalPicks; pickNo++) { const slot = pickSlot(pickNo, config.teams); const rosterId = config.slotToRosterId[String(slot)]; const result = recommendations(currentPicks, { ...config, myRosterId: Number(rosterId) }); const top = result.recommendations[0]; if (!top) break; const pick: DraftPick = { playerId: top.player.sleeperId, playerName: top.player.fullName, position: top.player.position, team: top.player.team, pickNo, round: Math.ceil(pickNo / config.teams), draftSlot: slot, rosterId: Number(rosterId), isManual: false }; currentPicks.push(pick); saveManualPick(config.draftId, pickNo, top.player.sleeperId, Number(rosterId), pick.round, slot); } res.json(await liveState()); } catch (e) { next(e); } });
 app.post('/api/manual-picks', (req, res) => {
   if (!config) return res.status(400).json({ error: 'Önce drafta bağlan.' });
   const { pickNo, sleeperId, rosterId, round, draftSlot } = req.body ?? {};

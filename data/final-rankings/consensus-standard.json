@@ -1,7 +1,21 @@
 {
-  "generatedAt": "2026-08-31T14:32:08.175Z",
+  "generatedAt": "2026-09-01T11:14:37.553Z",
   "scoringType": "standard",
   "players": [
+    {
+      "sleeperId": "4034",
+      "fullName": "Christian McCaffrey",
+      "normalizedName": "christian mccaffrey",
+      "position": "RB",
+      "team": "SF",
+      "active": true,
+      "score": 93.97142857142856,
+      "tier": "1. Tur (Soldan Sağa)",
+      "mockAdp": 4.8,
+      "evidenceCount": 13,
+      "confidence": 1,
+      "consensusRank": 1
+    },
     {
       "sleeperId": "6786",
       "fullName": "CeeDee Lamb",
@@ -14,7 +28,7 @@
       "mockAdp": 9.6,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 1
+      "consensusRank": 2
     },
     {
       "sleeperId": "12527",
@@ -28,7 +42,7 @@
       "mockAdp": 15.4,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 2
+      "consensusRank": 3
     },
     {
       "sleeperId": "9226",
@@ -42,7 +56,7 @@
       "mockAdp": 12.5,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 3
+      "consensusRank": 4
     },
     {
       "sleeperId": "8112",
@@ -56,7 +70,7 @@
       "mockAdp": 17.8,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 4
+      "consensusRank": 5
     },
     {
       "sleeperId": "9221",
@@ -70,7 +84,7 @@
       "mockAdp": 1.3,
       "evidenceCount": 12,
       "confidence": 0.9083333333333335,
-      "consensusRank": 5
+      "consensusRank": 6
     },
     {
       "sleeperId": "7564",
@@ -84,7 +98,7 @@
       "mockAdp": 3.4,
       "evidenceCount": 12,
       "confidence": 0.9083333333333335,
-      "consensusRank": 6
+      "consensusRank": 7
     },
     {
       "sleeperId": "11632",
@@ -98,7 +112,7 @@
       "mockAdp": 26.2,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 7
+      "consensusRank": 8
     },
     {
       "sleeperId": "9488",
@@ -112,7 +126,7 @@
       "mockAdp": 5.8,
       "evidenceCount": 12,
       "confidence": 0.9083333333333335,
-      "consensusRank": 8
+      "consensusRank": 9
     },
     {
       "sleeperId": "8137",
@@ -126,7 +140,7 @@
       "mockAdp": 22.9,
       "evidenceCount": 14,
       "confidence": 0.9071428571428574,
-      "consensusRank": 9
+      "consensusRank": 10
     },
     {
       "sleeperId": "8144",
@@ -140,7 +154,7 @@
       "mockAdp": 28.1,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 10
+      "consensusRank": 11
     },
     {
       "sleeperId": "8130",
@@ -154,7 +168,7 @@
       "mockAdp": 22.8,
       "evidenceCount": 9,
       "confidence": 0.9111111111111112,
-      "consensusRank": 11
+      "consensusRank": 12
     },
     {
       "sleeperId": "6790",
@@ -168,7 +182,7 @@
       "mockAdp": 46.5,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 12
+      "consensusRank": 13
     },
     {
       "sleeperId": "7526",
@@ -182,7 +196,7 @@
       "mockAdp": 43.5,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 13
+      "consensusRank": 14
     },
     {
       "sleeperId": "12514",
@@ -196,7 +210,7 @@
       "mockAdp": 40.9,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 14
+      "consensusRank": 15
     },
     {
       "sleeperId": "11635",
@@ -210,20 +224,6 @@
       "mockAdp": 39.2,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 15
-    },
-    {
-      "sleeperId": "4034",
-      "fullName": "Christian McCaffrey",
-      "normalizedName": "christian mccaffrey",
-      "position": "RB",
-      "team": "SF",
-      "active": true,
-      "score": 78.85,
-      "tier": "1. Tur (Soldan Sağa)",
-      "mockAdp": 4.6,
-      "evidenceCount": 8,
-      "confidence": 0.9125000000000001,
       "consensusRank": 16
     },
     {
@@ -479,6 +479,20 @@
       "consensusRank": 34
     },
     {
+      "sleeperId": "9509",
+      "fullName": "Bijan Robinson",
+      "normalizedName": "bijan robinson",
+      "position": "RB",
+      "team": "ATL",
+      "active": true,
+      "score": 64.90928571428572,
+      "tier": "1. Tur (Soldan Sağa)",
+      "mockAdp": 50.5,
+      "evidenceCount": 19,
+      "confidence": 1,
+      "consensusRank": 35
+    },
+    {
       "sleeperId": "7021",
       "fullName": "Rico Dowdle",
       "normalizedName": "rico dowdle",
@@ -490,7 +504,7 @@
       "mockAdp": 77,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 35
+      "consensusRank": 36
     },
     {
       "sleeperId": "12506",
@@ -504,7 +518,7 @@
       "mockAdp": 83.2,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 36
+      "consensusRank": 37
     },
     {
       "sleeperId": "6819",
@@ -518,7 +532,7 @@
       "mockAdp": 89.8,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 37
+      "consensusRank": 38
     },
     {
       "sleeperId": "13294",
@@ -532,7 +546,7 @@
       "mockAdp": 85.7,
       "evidenceCount": 12,
       "confidence": 0.9000000000000002,
-      "consensusRank": 38
+      "consensusRank": 39
     },
     {
       "sleeperId": "9754",
@@ -546,7 +560,7 @@
       "mockAdp": 99.6,
       "evidenceCount": 14,
       "confidence": 0.9071428571428574,
-      "consensusRank": 39
+      "consensusRank": 40
     },
     {
       "sleeperId": "7594",
@@ -560,7 +574,7 @@
       "mockAdp": 81.8,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 40
+      "consensusRank": 41
     },
     {
       "sleeperId": "11586",
@@ -574,7 +588,7 @@
       "mockAdp": 89.2,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 41
+      "consensusRank": 42
     },
     {
       "sleeperId": "3294",
@@ -588,7 +602,7 @@
       "mockAdp": 93.5,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 42
+      "consensusRank": 43
     },
     {
       "sleeperId": "13281",
@@ -602,7 +616,7 @@
       "mockAdp": 91.8,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 43
+      "consensusRank": 44
     },
     {
       "sleeperId": "12489",
@@ -616,7 +630,7 @@
       "mockAdp": 80.1,
       "evidenceCount": 9,
       "confidence": 0.9111111111111112,
-      "consensusRank": 44
+      "consensusRank": 45
     },
     {
       "sleeperId": "6806",
@@ -630,7 +644,7 @@
       "mockAdp": 89.8,
       "evidenceCount": 13,
       "confidence": 0.9076923076923079,
-      "consensusRank": 45
+      "consensusRank": 46
     },
     {
       "sleeperId": "6797",
@@ -644,20 +658,6 @@
       "mockAdp": 85.4,
       "evidenceCount": 8,
       "confidence": 0.9000000000000001,
-      "consensusRank": 46
-    },
-    {
-      "sleeperId": "9509",
-      "fullName": "Bijan Robinson",
-      "normalizedName": "bijan robinson",
-      "position": "RB",
-      "team": "ATL",
-      "active": true,
-      "score": 59.75999999999999,
-      "tier": "1. Tur (Soldan Sağa)",
-      "mockAdp": 2,
-      "evidenceCount": 1,
-      "confidence": 1,
       "consensusRank": 47
     },
     {
@@ -941,6 +941,20 @@
       "consensusRank": 67
     },
     {
+      "sleeperId": "HOU",
+      "fullName": "Houston Texans",
+      "normalizedName": "houston texans",
+      "position": "DEF",
+      "team": "HOU",
+      "active": true,
+      "score": 52.873333333333335,
+      "tier": "13. Tur (Soldan Sağa)",
+      "mockAdp": 111.3,
+      "evidenceCount": 9,
+      "confidence": 0.9111111111111112,
+      "consensusRank": 68
+    },
+    {
       "sleeperId": "7525",
       "fullName": "DeVonta Smith",
       "normalizedName": "devonta smith",
@@ -952,7 +966,7 @@
       "mockAdp": 31,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 68
+      "consensusRank": 69
     },
     {
       "sleeperId": "4881",
@@ -966,7 +980,7 @@
       "mockAdp": 32,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 69
+      "consensusRank": 70
     },
     {
       "sleeperId": "13287",
@@ -980,7 +994,7 @@
       "mockAdp": 33,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 70
+      "consensusRank": 71
     },
     {
       "sleeperId": "8259",
@@ -994,7 +1008,7 @@
       "mockAdp": 118.6,
       "evidenceCount": 7,
       "confidence": 0.9000000000000001,
-      "consensusRank": 71
+      "consensusRank": 72
     },
     {
       "sleeperId": "5850",
@@ -1008,7 +1022,7 @@
       "mockAdp": 34,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 72
+      "consensusRank": 73
     },
     {
       "sleeperId": "8155",
@@ -1022,7 +1036,7 @@
       "mockAdp": 35,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 73
+      "consensusRank": 74
     },
     {
       "sleeperId": "7543",
@@ -1036,7 +1050,7 @@
       "mockAdp": 36,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 74
+      "consensusRank": 75
     },
     {
       "sleeperId": "8146",
@@ -1050,7 +1064,7 @@
       "mockAdp": 38,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 75
+      "consensusRank": 76
     },
     {
       "sleeperId": "4983",
@@ -1064,7 +1078,7 @@
       "mockAdp": 39,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 76
+      "consensusRank": 77
     },
     {
       "sleeperId": "6801",
@@ -1078,7 +1092,7 @@
       "mockAdp": 40,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 77
+      "consensusRank": 78
     },
     {
       "sleeperId": "9997",
@@ -1092,7 +1106,7 @@
       "mockAdp": 41,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 78
+      "consensusRank": 79
     },
     {
       "sleeperId": "12526",
@@ -1106,7 +1120,7 @@
       "mockAdp": 42,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 79
+      "consensusRank": 80
     },
     {
       "sleeperId": "10236",
@@ -1120,7 +1134,7 @@
       "mockAdp": 107.5,
       "evidenceCount": 11,
       "confidence": 0.9000000000000002,
-      "consensusRank": 80
+      "consensusRank": 81
     },
     {
       "sleeperId": "12508",
@@ -1134,7 +1148,7 @@
       "mockAdp": 102.4,
       "evidenceCount": 11,
       "confidence": 0.9090909090909093,
-      "consensusRank": 81
+      "consensusRank": 82
     },
     {
       "sleeperId": "5892",
@@ -1148,7 +1162,7 @@
       "mockAdp": 49,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 82
+      "consensusRank": 83
     },
     {
       "sleeperId": "12529",
@@ -1162,7 +1176,7 @@
       "mockAdp": 51,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 83
+      "consensusRank": 84
     },
     {
       "sleeperId": "8180",
@@ -1176,7 +1190,7 @@
       "mockAdp": 134,
       "evidenceCount": 4,
       "confidence": 0.9,
-      "consensusRank": 84
+      "consensusRank": 85
     },
     {
       "sleeperId": "13286",
@@ -1190,7 +1204,7 @@
       "mockAdp": 53,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 85
+      "consensusRank": 86
     },
     {
       "sleeperId": "8142",
@@ -1204,7 +1218,7 @@
       "mockAdp": 99.8,
       "evidenceCount": 8,
       "confidence": 0.9125000000000001,
-      "consensusRank": 86
+      "consensusRank": 87
     },
     {
       "sleeperId": "13417",
@@ -1218,7 +1232,7 @@
       "mockAdp": 115.8,
       "evidenceCount": 9,
       "confidence": 0.9111111111111112,
-      "consensusRank": 87
+      "consensusRank": 88
     },
     {
       "sleeperId": "12533",
@@ -1232,7 +1246,7 @@
       "mockAdp": 105.8,
       "evidenceCount": 8,
       "confidence": 0.9125000000000001,
-      "consensusRank": 88
+      "consensusRank": 89
     },
     {
       "sleeperId": "1466",
@@ -1246,7 +1260,7 @@
       "mockAdp": 113.9,
       "evidenceCount": 11,
       "confidence": 0.9000000000000002,
-      "consensusRank": 89
+      "consensusRank": 90
     },
     {
       "sleeperId": "2133",
@@ -1260,7 +1274,7 @@
       "mockAdp": 57,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 90
+      "consensusRank": 91
     },
     {
       "sleeperId": "12518",
@@ -1274,7 +1288,21 @@
       "mockAdp": 59,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 91
+      "consensusRank": 92
+    },
+    {
+      "sleeperId": "LAR",
+      "fullName": "Los Angeles Rams",
+      "normalizedName": "los angeles rams",
+      "position": "DEF",
+      "team": "LAR",
+      "active": true,
+      "score": 45.9,
+      "tier": "12. Tur (Sağdan Sola)",
+      "mockAdp": 123.8,
+      "evidenceCount": 8,
+      "confidence": 0.9000000000000001,
+      "consensusRank": 93
     },
     {
       "sleeperId": "8148",
@@ -1288,7 +1316,7 @@
       "mockAdp": 60,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 92
+      "consensusRank": 94
     },
     {
       "sleeperId": "7523",
@@ -1302,7 +1330,7 @@
       "mockAdp": 106.7,
       "evidenceCount": 9,
       "confidence": 0.9111111111111112,
-      "consensusRank": 93
+      "consensusRank": 95
     },
     {
       "sleeperId": "8228",
@@ -1316,7 +1344,7 @@
       "mockAdp": 64,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 94
+      "consensusRank": 96
     },
     {
       "sleeperId": "11566",
@@ -1330,7 +1358,7 @@
       "mockAdp": 66,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 95
+      "consensusRank": 97
     },
     {
       "sleeperId": "9487",
@@ -1344,7 +1372,7 @@
       "mockAdp": 67,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 96
+      "consensusRank": 98
     },
     {
       "sleeperId": "11583",
@@ -1358,7 +1386,7 @@
       "mockAdp": 69,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 97
+      "consensusRank": 99
     },
     {
       "sleeperId": "8132",
@@ -1372,7 +1400,7 @@
       "mockAdp": 127.6,
       "evidenceCount": 9,
       "confidence": 0.9111111111111112,
-      "consensusRank": 98
+      "consensusRank": 100
     },
     {
       "sleeperId": "4046",
@@ -1386,7 +1414,7 @@
       "mockAdp": 122.9,
       "evidenceCount": 11,
       "confidence": 0.9000000000000002,
-      "consensusRank": 99
+      "consensusRank": 101
     },
     {
       "sleeperId": "5022",
@@ -1400,7 +1428,7 @@
       "mockAdp": 129,
       "evidenceCount": 9,
       "confidence": 0.9000000000000001,
-      "consensusRank": 100
+      "consensusRank": 102
     },
     {
       "sleeperId": "2216",
@@ -1414,7 +1442,7 @@
       "mockAdp": 71,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 101
+      "consensusRank": 103
     },
     {
       "sleeperId": "8131",
@@ -1428,7 +1456,7 @@
       "mockAdp": 125.3,
       "evidenceCount": 10,
       "confidence": 0.9000000000000001,
-      "consensusRank": 102
+      "consensusRank": 104
     },
     {
       "sleeperId": "8408",
@@ -1442,7 +1470,7 @@
       "mockAdp": 72,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 103
+      "consensusRank": 105
     },
     {
       "sleeperId": "9486",
@@ -1456,7 +1484,7 @@
       "mockAdp": 144,
       "evidenceCount": 1,
       "confidence": 0.9,
-      "consensusRank": 104
+      "consensusRank": 106
     },
     {
       "sleeperId": "8167",
@@ -1470,7 +1498,21 @@
       "mockAdp": 73,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 105
+      "consensusRank": 107
+    },
+    {
+      "sleeperId": "SEA",
+      "fullName": "Seattle Seahawks",
+      "normalizedName": "seattle seahawks",
+      "position": "DEF",
+      "team": "SEA",
+      "active": true,
+      "score": 42.39200000000001,
+      "tier": "13. Tur (Soldan Sağa)",
+      "mockAdp": 131.7,
+      "evidenceCount": 7,
+      "confidence": 0.9000000000000001,
+      "consensusRank": 108
     },
     {
       "sleeperId": "12534",
@@ -1484,7 +1526,7 @@
       "mockAdp": 75,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 106
+      "consensusRank": 109
     },
     {
       "sleeperId": "11563",
@@ -1498,7 +1540,7 @@
       "mockAdp": 128.5,
       "evidenceCount": 11,
       "confidence": 0.9000000000000002,
-      "consensusRank": 107
+      "consensusRank": 110
     },
     {
       "sleeperId": "9225",
@@ -1512,7 +1554,7 @@
       "mockAdp": 137.3,
       "evidenceCount": 6,
       "confidence": 0.9,
-      "consensusRank": 108
+      "consensusRank": 111
     },
     {
       "sleeperId": "9753",
@@ -1526,7 +1568,7 @@
       "mockAdp": 132.9,
       "evidenceCount": 9,
       "confidence": 0.9000000000000001,
-      "consensusRank": 109
+      "consensusRank": 112
     },
     {
       "sleeperId": "7553",
@@ -1540,7 +1582,7 @@
       "mockAdp": 79,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 110
+      "consensusRank": 113
     },
     {
       "sleeperId": "8676",
@@ -1554,7 +1596,7 @@
       "mockAdp": 134.5,
       "evidenceCount": 8,
       "confidence": 0.9000000000000001,
-      "consensusRank": 111
+      "consensusRank": 114
     },
     {
       "sleeperId": "8183",
@@ -1568,7 +1610,7 @@
       "mockAdp": 129.6,
       "evidenceCount": 11,
       "confidence": 0.9000000000000002,
-      "consensusRank": 112
+      "consensusRank": 115
     },
     {
       "sleeperId": "6803",
@@ -1582,7 +1624,7 @@
       "mockAdp": 149,
       "evidenceCount": 1,
       "confidence": 0.9,
-      "consensusRank": 113
+      "consensusRank": 116
     },
     {
       "sleeperId": "8126",
@@ -1596,7 +1638,7 @@
       "mockAdp": 82,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 114
+      "consensusRank": 117
     },
     {
       "sleeperId": "13346",
@@ -1610,7 +1652,7 @@
       "mockAdp": 138.3,
       "evidenceCount": 6,
       "confidence": 0.9,
-      "consensusRank": 115
+      "consensusRank": 118
     },
     {
       "sleeperId": "11581",
@@ -1624,7 +1666,7 @@
       "mockAdp": 134,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 116
+      "consensusRank": 119
     },
     {
       "sleeperId": "3451",
@@ -1638,7 +1680,7 @@
       "mockAdp": 140.8,
       "evidenceCount": 5,
       "confidence": 0.9,
-      "consensusRank": 117
+      "consensusRank": 120
     },
     {
       "sleeperId": "11560",
@@ -1652,7 +1694,7 @@
       "mockAdp": 84,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 118
+      "consensusRank": 121
     },
     {
       "sleeperId": "7567",
@@ -1666,7 +1708,7 @@
       "mockAdp": 85,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 119
+      "consensusRank": 122
     },
     {
       "sleeperId": "8136",
@@ -1680,7 +1722,7 @@
       "mockAdp": 86,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 120
+      "consensusRank": 123
     },
     {
       "sleeperId": "2747",
@@ -1694,7 +1736,7 @@
       "mockAdp": 135.3,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 121
+      "consensusRank": 124
     },
     {
       "sleeperId": "11628",
@@ -1708,7 +1750,7 @@
       "mockAdp": 89,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 122
+      "consensusRank": 125
     },
     {
       "sleeperId": "12493",
@@ -1722,7 +1764,7 @@
       "mockAdp": 128,
       "evidenceCount": 8,
       "confidence": 0.9000000000000001,
-      "consensusRank": 123
+      "consensusRank": 126
     },
     {
       "sleeperId": "4199",
@@ -1736,7 +1778,21 @@
       "mockAdp": 90,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 124
+      "consensusRank": 127
+    },
+    {
+      "sleeperId": "DEN",
+      "fullName": "Denver Broncos",
+      "normalizedName": "denver broncos",
+      "position": "DEF",
+      "team": "DEN",
+      "active": true,
+      "score": 38.472,
+      "tier": "13. Tur (Soldan Sağa)",
+      "mockAdp": 140.5,
+      "evidenceCount": 8,
+      "confidence": 0.9125000000000001,
+      "consensusRank": 128
     },
     {
       "sleeperId": "10232",
@@ -1750,7 +1806,7 @@
       "mockAdp": 91,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 125
+      "consensusRank": 129
     },
     {
       "sleeperId": "11631",
@@ -1764,7 +1820,7 @@
       "mockAdp": 92,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 126
+      "consensusRank": 130
     },
     {
       "sleeperId": "8205",
@@ -1778,7 +1834,7 @@
       "mockAdp": 155.7,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 127
+      "consensusRank": 131
     },
     {
       "sleeperId": "9508",
@@ -1792,7 +1848,7 @@
       "mockAdp": 142,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 128
+      "consensusRank": 132
     },
     {
       "sleeperId": "4037",
@@ -1806,7 +1862,7 @@
       "mockAdp": 93,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 129
+      "consensusRank": 133
     },
     {
       "sleeperId": "13288",
@@ -1820,7 +1876,7 @@
       "mockAdp": 156.5,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 130
+      "consensusRank": 134
     },
     {
       "sleeperId": "13279",
@@ -1834,7 +1890,7 @@
       "mockAdp": 94,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 131
+      "consensusRank": 135
     },
     {
       "sleeperId": "10219",
@@ -1848,21 +1904,35 @@
       "mockAdp": 135.3,
       "evidenceCount": 4,
       "confidence": 0.9,
-      "consensusRank": 132
+      "consensusRank": 136
     },
     {
       "sleeperId": "11199",
       "fullName": "Emari Demercado",
       "normalizedName": "emari demercado",
       "position": "RB",
-      "team": "KC",
+      "team": null,
       "active": true,
       "score": 37.2,
       "tier": "14. Tur (Sağdan Sola)",
       "mockAdp": 158,
       "evidenceCount": 1,
       "confidence": 0.9,
-      "consensusRank": 133
+      "consensusRank": 137
+    },
+    {
+      "sleeperId": "BAL",
+      "fullName": "Baltimore Ravens",
+      "normalizedName": "baltimore ravens",
+      "position": "DEF",
+      "team": "BAL",
+      "active": true,
+      "score": 37.06999999999999,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 145.8,
+      "evidenceCount": 5,
+      "confidence": 0.9,
+      "consensusRank": 138
     },
     {
       "sleeperId": "11646",
@@ -1876,7 +1946,7 @@
       "mockAdp": 139.2,
       "evidenceCount": 5,
       "confidence": 0.9,
-      "consensusRank": 134
+      "consensusRank": 139
     },
     {
       "sleeperId": "5045",
@@ -1890,7 +1960,7 @@
       "mockAdp": 97,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 135
+      "consensusRank": 140
     },
     {
       "sleeperId": "12474",
@@ -1904,7 +1974,7 @@
       "mockAdp": 98,
       "evidenceCount": 1,
       "confidence": 1,
-      "consensusRank": 136
+      "consensusRank": 141
     },
     {
       "sleeperId": "5001",
@@ -1918,7 +1988,7 @@
       "mockAdp": 159.5,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 137
+      "consensusRank": 142
     },
     {
       "sleeperId": "11786",
@@ -1932,7 +2002,7 @@
       "mockAdp": 145.8,
       "evidenceCount": 5,
       "confidence": 0.9,
-      "consensusRank": 138
+      "consensusRank": 143
     },
     {
       "sleeperId": "3163",
@@ -1946,7 +2016,7 @@
       "mockAdp": 140.6,
       "evidenceCount": 8,
       "confidence": 0.9000000000000001,
-      "consensusRank": 139
+      "consensusRank": 144
     },
     {
       "sleeperId": "11655",
@@ -1960,7 +2030,21 @@
       "mockAdp": 145.6,
       "evidenceCount": 5,
       "confidence": 0.9,
-      "consensusRank": 140
+      "consensusRank": 145
+    },
+    {
+      "sleeperId": "PHI",
+      "fullName": "Philadelphia Eagles",
+      "normalizedName": "philadelphia eagles",
+      "position": "DEF",
+      "team": "PHI",
+      "active": true,
+      "score": 35.488,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 150,
+      "evidenceCount": 6,
+      "confidence": 0.9,
+      "consensusRank": 146
     },
     {
       "sleeperId": "9502",
@@ -1974,7 +2058,7 @@
       "mockAdp": 164,
       "evidenceCount": 1,
       "confidence": 0.9,
-      "consensusRank": 141
+      "consensusRank": 147
     },
     {
       "sleeperId": "12469",
@@ -1988,7 +2072,7 @@
       "mockAdp": 164.5,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 142
+      "consensusRank": 148
     },
     {
       "sleeperId": "5012",
@@ -2002,7 +2086,21 @@
       "mockAdp": 129,
       "evidenceCount": 6,
       "confidence": 0.9,
-      "consensusRank": 143
+      "consensusRank": 149
+    },
+    {
+      "sleeperId": "JAX",
+      "fullName": "Jacksonville Jaguars",
+      "normalizedName": "jacksonville jaguars",
+      "position": "DEF",
+      "team": "JAX",
+      "active": true,
+      "score": 33.952,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 158.6,
+      "evidenceCount": 5,
+      "confidence": 0.9,
+      "consensusRank": 150
     },
     {
       "sleeperId": "4035",
@@ -2016,7 +2114,21 @@
       "mockAdp": 151.8,
       "evidenceCount": 5,
       "confidence": 0.9,
-      "consensusRank": 144
+      "consensusRank": 151
+    },
+    {
+      "sleeperId": "NE",
+      "fullName": "New England Patriots",
+      "normalizedName": "new england patriots",
+      "position": "DEF",
+      "team": "NE",
+      "active": true,
+      "score": 33.12,
+      "tier": "12. Tur (Sağdan Sola)",
+      "mockAdp": 148,
+      "evidenceCount": 3,
+      "confidence": 0.9,
+      "consensusRank": 152
     },
     {
       "sleeperId": "11539",
@@ -2030,7 +2142,7 @@
       "mockAdp": 149.7,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 145
+      "consensusRank": 153
     },
     {
       "sleeperId": "2219",
@@ -2044,7 +2156,35 @@
       "mockAdp": 149.5,
       "evidenceCount": 4,
       "confidence": 0.9,
-      "consensusRank": 146
+      "consensusRank": 154
+    },
+    {
+      "sleeperId": "MIN",
+      "fullName": "Minnesota Vikings",
+      "normalizedName": "minnesota vikings",
+      "position": "DEF",
+      "team": "MIN",
+      "active": true,
+      "score": 32.379999999999995,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 161.6,
+      "evidenceCount": 5,
+      "confidence": 0.9,
+      "consensusRank": 155
+    },
+    {
+      "sleeperId": "LAC",
+      "fullName": "Los Angeles Chargers",
+      "normalizedName": "los angeles chargers",
+      "position": "DEF",
+      "team": "LAC",
+      "active": true,
+      "score": 32.1,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 162.3,
+      "evidenceCount": 4,
+      "confidence": 0.9,
+      "consensusRank": 156
     },
     {
       "sleeperId": "12545",
@@ -2058,7 +2198,7 @@
       "mockAdp": 160.7,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 147
+      "consensusRank": 157
     },
     {
       "sleeperId": "9480",
@@ -2072,7 +2212,21 @@
       "mockAdp": 156.3,
       "evidenceCount": 4,
       "confidence": 0.9,
-      "consensusRank": 148
+      "consensusRank": 158
+    },
+    {
+      "sleeperId": "PIT",
+      "fullName": "Pittsburgh Steelers",
+      "normalizedName": "pittsburgh steelers",
+      "position": "DEF",
+      "team": "PIT",
+      "active": true,
+      "score": 29,
+      "tier": "13. Tur (Soldan Sağa)",
+      "mockAdp": 158.5,
+      "evidenceCount": 2,
+      "confidence": 0.9,
+      "consensusRank": 159
     },
     {
       "sleeperId": "1945",
@@ -2086,7 +2240,7 @@
       "mockAdp": 163.3,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 149
+      "consensusRank": 160
     },
     {
       "sleeperId": "11792",
@@ -2100,7 +2254,7 @@
       "mockAdp": 167,
       "evidenceCount": 3,
       "confidence": 0.9,
-      "consensusRank": 150
+      "consensusRank": 161
     },
     {
       "sleeperId": "4892",
@@ -2114,7 +2268,7 @@
       "mockAdp": 139,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 151
+      "consensusRank": 162
     },
     {
       "sleeperId": "4227",
@@ -2128,7 +2282,7 @@
       "mockAdp": 166.5,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 152
+      "consensusRank": 163
     },
     {
       "sleeperId": "5844",
@@ -2142,7 +2296,21 @@
       "mockAdp": 168.5,
       "evidenceCount": 2,
       "confidence": 0.9,
-      "consensusRank": 153
+      "consensusRank": 164
+    },
+    {
+      "sleeperId": "DET",
+      "fullName": "Detroit Lions",
+      "normalizedName": "detroit lions",
+      "position": "DEF",
+      "team": "DET",
+      "active": true,
+      "score": 26.199999999999996,
+      "tier": "14. Tur (Sağdan Sola)",
+      "mockAdp": 167.5,
+      "evidenceCount": 2,
+      "confidence": 0.9,
+      "consensusRank": 165
     },
     {
       "sleeperId": "12711",
@@ -2156,7 +2324,7 @@
       "mockAdp": 168,
       "evidenceCount": 1,
       "confidence": 0.9,
-      "consensusRank": 154
+      "consensusRank": 166
     }
   ]
 }

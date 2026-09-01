@@ -5,20 +5,21 @@ import { consensus } from './consensus.js';
 import { parseAllMarkdown } from './markdown.js';
 import type { Player, Position, SourceEntry } from './types.js';
 
-type SleeperPlayer = { full_name?: string; position?: string; team?: string; active?: boolean; fantasy_positions?: string[] };
+type SleeperPlayer = { full_name?: string; first_name?: string; last_name?: string; position?: string; team?: string; active?: boolean; fantasy_positions?: string[] };
 const positions = new Set(['QB', 'RB', 'WR', 'TE', 'K', 'DEF']);
 const positionOf = (p: SleeperPlayer): Position | null => {
   const value = p.position === 'DST' ? 'DEF' : p.position;
   return positions.has(value ?? '') ? value as Position : null;
 };
+const fullNameOf = (p: SleeperPlayer): string => p.full_name ?? [p.first_name, p.last_name].filter(Boolean).join(' ');
 
 export async function refreshPlayerCatalog() {
   const response = await fetch('https://api.sleeper.app/v1/players/nfl');
   if (!response.ok) throw new Error(`Sleeper oyuncu kataloğu alınamadı (${response.status})`);
   const raw = await response.json() as Record<string, SleeperPlayer>;
   const players: Player[] = Object.entries(raw)
-    .filter(([, p]) => Boolean(p.full_name) && Boolean(positionOf(p)))
-    .map(([sleeperId, p]) => ({ sleeperId, fullName: p.full_name!, normalizedName: normalizeName(p.full_name!), position: positionOf(p), team: p.team ?? null, active: p.active !== false }));
+    .filter(([, p]) => Boolean(fullNameOf(p)) && Boolean(positionOf(p)))
+    .map(([sleeperId, p]) => ({ sleeperId, fullName: fullNameOf(p), normalizedName: normalizeName(fullNameOf(p)), position: positionOf(p), team: p.team ?? null, active: p.active !== false }));
   replacePlayers(players);
   return players;
 }

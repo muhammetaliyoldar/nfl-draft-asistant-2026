@@ -5,6 +5,7 @@ const draftSlotForPick = (pickNo: number, teams: number) => {
   const round = Math.ceil(pickNo / teams); const within = (pickNo - 1) % teams + 1;
   return round % 2 ? within : teams - within + 1;
 };
+export { draftSlotForPick };
 export const nextPickForRoster = (picks: DraftPick[], config: LeagueConfig) => {
   const mySlots = Object.entries(config.slotToRosterId).filter(([, roster]) => Number(roster) === config.myRosterId).map(([slot]) => Number(slot));
   const mySlot = mySlots[0] ?? Object.entries(config.draftOrder).find(([, slot]) => config.slotToRosterId[String(slot)] === config.myRosterId)?.[1];
@@ -54,10 +55,14 @@ function survivalChance(player: ConsensusPlayer, available: ConsensusPlayer[], p
 }
 
 export function recommendations(picks: DraftPick[], config: LeagueConfig): { nextPick: number | null; recommendations: Recommendation[] } {
+  return recommendationsForPick(picks, config, nextPickForRoster(picks, config));
+}
+
+export function recommendationsForPick(picks: DraftPick[], config: LeagueConfig, targetPick: number | null): { nextPick: number | null; recommendations: Recommendation[] } {
   const ranked = consensus(config.scoringType);
   const taken = new Set(picks.map(p => p.playerId));
   const available = ranked.filter(p => !taken.has(p.sleeperId) && p.active).slice(0, 180);
-  const nextPick = nextPickForRoster(picks, config);
+  const nextPick = targetPick ?? nextPickForRoster(picks, config);
   const myPicks = picks.filter(p => p.rosterId === config.myRosterId);
   const afterMyPick = nextPick ? nextPick + (config.teams * 2 - 1) : picks.length;
   const picksUntilNext = Math.max(0, afterMyPick - (nextPick ?? picks.length) - 1);
