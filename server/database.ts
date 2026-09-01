@@ -11,7 +11,7 @@ db.exec(`
   PRAGMA journal_mode = WAL;
   CREATE TABLE IF NOT EXISTS players (
     sleeper_id TEXT PRIMARY KEY, full_name TEXT NOT NULL, normalized_name TEXT NOT NULL,
-    position TEXT, team TEXT, active INTEGER NOT NULL
+    position TEXT, team TEXT, active INTEGER NOT NULL, bye_week INTEGER
   );
   CREATE TABLE IF NOT EXISTS source_entries (
     id INTEGER PRIMARY KEY, source TEXT NOT NULL, file_name TEXT NOT NULL, kind TEXT NOT NULL,
@@ -29,20 +29,23 @@ db.exec(`
   );
 `);
 
+// Migration: add bye_week column if missing
+try { db.exec('ALTER TABLE players ADD COLUMN bye_week INTEGER'); } catch (_) { /* column exists */ }
+
 export const normalizeName = (value: string) => value
   .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function replacePlayers(players: Player[]) {
   db.exec('DELETE FROM players');
-  const stmt = db.prepare('INSERT INTO players VALUES (?, ?, ?, ?, ?, ?)');
-  for (const p of players) stmt.run(p.sleeperId, p.fullName, p.normalizedName, p.position, p.team, Number(p.active));
+  const stmt = db.prepare('INSERT INTO players VALUES (?, ?, ?, ?, ?, ?, ?)');
+  for (const p of players) stmt.run(p.sleeperId, p.fullName, p.normalizedName, p.position, p.team, Number(p.active), p.byeWeek ?? null);
 }
 
 export function getPlayers(): Player[] {
-  return db.prepare('SELECT sleeper_id, full_name, normalized_name, position, team, active FROM players').all().map((r: any) => ({
+  return db.prepare('SELECT sleeper_id, full_name, normalized_name, position, team, active, bye_week FROM players').all().map((r: any) => ({
     sleeperId: r.sleeper_id, fullName: r.full_name, normalizedName: r.normalized_name,
-    position: r.position, team: r.team, active: Boolean(r.active),
+    position: r.position, team: r.team, active: Boolean(r.active), byeWeek: r.bye_week,
   }));
 }
 

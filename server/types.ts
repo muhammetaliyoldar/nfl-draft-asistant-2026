@@ -8,6 +8,7 @@ export interface Player {
   position: Position | null;
   team: string | null;
   active: boolean;
+  byeWeek?: number | null;
 }
 
 export interface SourceEntry {
@@ -33,6 +34,20 @@ export interface ConsensusPlayer extends Player {
   mockAdp: number | null;
   evidenceCount: number;
   confidence: number;
+  byeWeek?: number | null;
+}
+
+export interface StrategyInfo {
+  name: string;
+  description: string;
+  strength: number;
+  nextPickAdvice: string;
+}
+
+export interface AdpBargain {
+  player: ConsensusPlayer;
+  adpDiff: number;
+  label: string;
 }
 
 export interface DraftPick {

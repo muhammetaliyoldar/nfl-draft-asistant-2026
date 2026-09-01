@@ -5,7 +5,7 @@ import { consensus } from './consensus.js';
 import { parseAllMarkdown } from './markdown.js';
 import type { Player, Position, SourceEntry } from './types.js';
 
-type SleeperPlayer = { full_name?: string; first_name?: string; last_name?: string; position?: string; team?: string; active?: boolean; fantasy_positions?: string[] };
+type SleeperPlayer = { full_name?: string; first_name?: string; last_name?: string; position?: string; team?: string; active?: boolean; fantasy_positions?: string[]; bye_week?: number };
 const positions = new Set(['QB', 'RB', 'WR', 'TE', 'K', 'DEF']);
 const positionOf = (p: SleeperPlayer): Position | null => {
   const value = p.position === 'DST' ? 'DEF' : p.position;
@@ -19,7 +19,7 @@ export async function refreshPlayerCatalog() {
   const raw = await response.json() as Record<string, SleeperPlayer>;
   const players: Player[] = Object.entries(raw)
     .filter(([, p]) => Boolean(fullNameOf(p)) && Boolean(positionOf(p)))
-    .map(([sleeperId, p]) => ({ sleeperId, fullName: fullNameOf(p), normalizedName: normalizeName(fullNameOf(p)), position: positionOf(p), team: p.team ?? null, active: p.active !== false }));
+    .map(([sleeperId, p]) => ({ sleeperId, fullName: fullNameOf(p), normalizedName: normalizeName(fullNameOf(p)), position: positionOf(p), team: p.team ?? null, active: p.active !== false, byeWeek: p.bye_week ?? null }));
   replacePlayers(players);
   return players;
 }

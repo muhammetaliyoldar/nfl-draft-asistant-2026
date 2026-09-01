@@ -122,12 +122,75 @@ small { font-size: .75rem; color: #93a6bb; }
 .draft-cell.on-clock { outline: 2px solid #6de2af; outline-offset: -2px; background: #1b4d3d; animation: clockpulse 1.2s infinite; }
 .draft-cell .forecast { color: #b4cadf; font-weight: 600; }
 @keyframes clockpulse { 50% { filter: brightness(1.28); } }
-@media (max-width: 1100px) {
-  .setup { grid-template-columns: 1fr; }
-  .setup-right { position: static; }
-  .metrics { grid-template-columns: repeat(2, 1fr); }
-}
+
+/* Strategy Banner */
+.strategy-banner { background: linear-gradient(135deg, #101a29, #172336); border: 1px solid #24334a; border-radius: 14px; padding: 18px 22px; margin-bottom: 16px; }
+.strategy-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.strategy-label { font: 500 .7rem 'DM Mono'; color: #93a6bb; text-transform: uppercase; letter-spacing: .08em; }
+.strategy-name { font-size: 1.1rem; font-weight: 800; }
+.strategy-desc { font-size: .82rem; color: #b8c8db; }
+.strategy-advice { font-size: .82rem; color: #6de2af; margin-bottom: 10px; }
+.strategy-advice small { color: #93a6bb; margin-right: 4px; }
+.strategy-bar { height: 4px; background: #1d2d44; border-radius: 4px; overflow: hidden; }
+.strategy-fill { height: 100%; border-radius: 4px; transition: width .5s ease; }
+
+/* Bye Week Warning */
+.bye-warning { background: linear-gradient(135deg, #38201c, #2d1a15); border: 1px solid #5a3020; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
+.bye-warning strong { color: #ffbe9f; font-size: .9rem; display: block; margin-bottom: 8px; }
+.bye-conflict { display: flex; align-items: center; gap: 10px; margin-top: 6px; font-size: .82rem; color: #ffb088; }
+.bye-week-badge { font: 600 .65rem 'DM Mono'; background: #5a3020; color: #ffbe9f; padding: .2rem .5rem; border-radius: 6px; flex-shrink: 0; }
+
+/* ADP Bargains */
+.bargains-section { margin-bottom: 16px; }
+.bargains-section h2 { margin-bottom: 12px; }
+.bargains-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.bargain-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: #101a29; border: 1px solid #24334a; border-radius: 12px; transition: all .15s; }
+.bargain-card:hover { border-color: #3a506b; transform: translateY(-1px); }
+.bargain-card.big { border-color: #feca5744; background: #1a1d10; }
+.bargain-card.mega { border-color: #6de2af44; background: #12392e44; animation: bargPulse 2s infinite; }
+@keyframes bargPulse { 50% { box-shadow: 0 0 12px rgba(109, 226, 175, .15); } }
+.bargain-rank { font: 600 .85rem 'DM Mono'; color: #6de2af; min-width: 36px; text-align: center; flex-shrink: 0; }
+.bargain-info { flex: 1; min-width: 0; }
+.bargain-info strong { display: block; font-size: .85rem; color: #f4f8ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bargain-info small { display: block; color: #93a6bb; font-size: .7rem; margin-top: 2px; }
+.bargain-diff { text-align: right; flex-shrink: 0; }
+.diff-badge { display: inline-block; font: 600 .75rem 'DM Mono'; background: #6de2af22; color: #6de2af; padding: .15rem .45rem; border-radius: 6px; }
+.bargain-card.big .diff-badge { background: #feca5722; color: #feca57; }
+.bargain-card.mega .diff-badge { background: #6de2af33; color: #6de2af; font-size: .85rem; }
+.diff-label { display: block; font-size: .65rem; color: #93a6bb; margin-top: 2px; }
+
+/* Recommendation tier badge */
+.rec-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tier-badge { font: 500 .6rem 'DM Mono'; padding: .15rem .45rem; border-radius: 6px; border: 1px solid; white-space: nowrap; }
+
+/* Player Search Panel */
+.player-search { background: #101a29; border: 1px solid #24334a; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.player-search h2 { margin-bottom: 12px; }
+.search-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.search-input { border: 1px solid #344862; border-radius: 10px; padding: .7rem .9rem; background: #0b1320; color: #f4f8ff; width: 100%; transition: border-color .15s, box-shadow .15s; }
+.search-input:focus { outline: none; border-color: #6de2af; box-shadow: 0 0 0 3px rgba(109, 226, 175, .15); }
+.pos-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.pos-btn { font: 500 .7rem 'DM Mono'; padding: .35rem .7rem; border-radius: 8px; background: #172336; color: #94aac2; border: 1px solid transparent; transition: all .15s; }
+.pos-btn:hover { background: #1d2d44; border-color: #3a506b; }
+.pos-btn.active { background: #6de2af; color: #062317; border-color: #6de2af; }
+.search-loading { color: #93a6bb; font-size: .82rem; }
+.search-results { display: grid; gap: 6px; max-height: 400px; overflow-y: auto; }
+.search-card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: #0b1320; border: 1px solid #1d2d44; border-radius: 10px; transition: all .15s; }
+.search-card:hover { border-color: #3a506b; background: #112030; }
+.search-card.taken { opacity: .35; pointer-events: none; }
+.search-rank { font: 600 .8rem 'DM Mono'; color: #6de2af; min-width: 32px; text-align: center; flex-shrink: 0; }
+.search-info { flex: 1; min-width: 0; }
+.search-info strong { display: block; font-size: .85rem; color: #f4f8ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-info small { display: block; color: #93a6bb; font-size: .7rem; margin-top: 1px; }
+.search-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.tier-tag { font: 500 .6rem 'DM Mono'; white-space: nowrap; }
+.adp-tag { font: 500 .6rem 'DM Mono'; color: #feca57; background: #feca5715; padding: .1rem .35rem; border-radius: 5px; white-space: nowrap; }
+.bye-tag { font: 500 .6rem 'DM Mono'; color: #ff8b6b; background: #ff8b6b15; padding: .1rem .35rem; border-radius: 5px; white-space: nowrap; }
+.search-empty { color: #93a6bb; font-size: .82rem; text-align: center; padding: 20px; }
+
 @media (max-width: 800px) {
+  .bargains-grid { grid-template-columns: 1fr; }
+  .strategy-info { flex-direction: column; align-items: flex-start; }
   main { padding: 20px 13px; }
   header, .grid { display: block; }
   .status { margin-top: 12px; }
@@ -136,4 +199,9 @@ small { font-size: .75rem; color: #93a6bb; }
   .manual-fields { grid-template-columns: 1fr; }
   .manual input[type="number"] { width: 100%; }
   .draft-grid { min-width: 600px; }
+}
+@media (max-width: 1100px) {
+  .setup { grid-template-columns: 1fr; }
+  .setup-right { position: static; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
 }

@@ -1,0 +1,329 @@
+{
+  "communities": {
+    "0": [
+      "server_consensus",
+      "server_consensus_avg",
+      "server_consensus_consensus",
+      "server_consensus_ensurekickerdefense",
+      "server_consensus_formatweight",
+      "server_consensus_nflteams",
+      "server_database",
+      "server_database_aliases",
+      "server_database_clearmanualpicks",
+      "server_database_datadir",
+      "server_database_db",
+      "server_database_getentries",
+      "server_database_getplayers",
+      "server_database_normalizename",
+      "server_database_replaceentries",
+      "server_database_replaceplayers",
+      "server_database_savealias",
+      "server_database_savemanualpick",
+      "server_import_rankings",
+      "server_import_rankings_fullnameof",
+      "server_import_rankings_importrankings",
+      "server_import_rankings_positionof",
+      "server_import_rankings_positions",
+      "server_import_rankings_refreshplayercatalog",
+      "server_import_rankings_resolveentries",
+      "server_import_rankings_sleeperplayer",
+      "server_index_ensurerankings"
+    ],
+    "1": [
+      "ref_dom",
+      "ref_dom_iterable",
+      "ref_es2022",
+      "ref_server",
+      "ref_src",
+      "ref_vite_config_ts",
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_allowjs",
+      "tsconfig_compileroptions_allowsyntheticdefaultimports",
+      "tsconfig_compileroptions_esmoduleinterop",
+      "tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "tsconfig_compileroptions_isolatedmodules",
+      "tsconfig_compileroptions_jsx",
+      "tsconfig_compileroptions_lib",
+      "tsconfig_compileroptions_module",
+      "tsconfig_compileroptions_moduleresolution",
+      "tsconfig_compileroptions_noemit",
+      "tsconfig_compileroptions_resolvejsonmodule",
+      "tsconfig_compileroptions_skiplibcheck",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_compileroptions_target",
+      "tsconfig_compileroptions_usedefineforclassfields",
+      "tsconfig_include"
+    ],
+    "2": [
+      "express",
+      "graphify",
+      "package",
+      "package_dependencies",
+      "package_dependencies_express",
+      "package_dependencies_graphify",
+      "package_dependencies_react",
+      "package_dependencies_react_dom",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_dev_client",
+      "package_scripts_dev_server",
+      "package_scripts_import_rankings",
+      "package_scripts_start",
+      "package_scripts_test",
+      "package_type",
+      "package_version",
+      "react",
+      "react_dom"
+    ],
+    "3": [
+      "concurrently",
+      "package_devdependencies",
+      "package_devdependencies_concurrently",
+      "package_devdependencies_tsx",
+      "package_devdependencies_types_express",
+      "package_devdependencies_types_node",
+      "package_devdependencies_types_react",
+      "package_devdependencies_types_react_dom",
+      "package_devdependencies_typescript",
+      "package_devdependencies_vite",
+      "package_devdependencies_vitejs_plugin_react",
+      "package_devdependencies_vitest",
+      "tsx",
+      "types_express",
+      "types_node",
+      "types_react",
+      "types_react_dom",
+      "typescript",
+      "vite",
+      "vitejs_plugin_react",
+      "vitest"
+    ],
+    "4": [
+      "src_app",
+      "src_app_api",
+      "src_app_app",
+      "src_app_boardsuggestion",
+      "src_app_dashboard",
+      "src_app_democontrols",
+      "src_app_draftboard",
+      "src_app_errormessage",
+      "src_app_manualpick",
+      "src_app_metric",
+      "src_app_myslot",
+      "src_app_pick",
+      "src_app_pickslot",
+      "src_app_position",
+      "src_app_rec",
+      "src_app_setup",
+      "src_app_state",
+      "src_app_userleague",
+      "src_main"
+    ],
+    "5": [
+      "server_database_getmanualpicks",
+      "server_index",
+      "server_index_app",
+      "server_index_cachedpicks",
+      "server_index_dist",
+      "server_index_livestate",
+      "server_sleeper",
+      "server_sleeper_connect",
+      "server_sleeper_getpicks",
+      "server_sleeper_getuserleagues",
+      "server_sleeper_position",
+      "server_sleeper_publicstate",
+      "server_sleeper_sleeper",
+      "server_sleeper_userleague",
+      "server_types_draftpick"
+    ],
+    "6": [
+      "server_markdown",
+      "server_markdown_asposition",
+      "server_markdown_cleanplayer",
+      "server_markdown_meta",
+      "server_markdown_parseallmarkdown",
+      "server_markdown_parsemarkdownfile",
+      "server_types",
+      "server_types_boardsuggestion",
+      "server_types_consensusplayer",
+      "server_types_draftstate",
+      "server_types_player",
+      "server_types_position",
+      "server_types_recommendation",
+      "server_types_sourceentry",
+      "server_types_sourcekind"
+    ],
+    "7": [
+      "server_recommend",
+      "server_recommend_draftslotforpick",
+      "server_recommend_nextpickforroster",
+      "server_recommend_positionneeded",
+      "server_recommend_recommendations",
+      "server_recommend_recommendationsforpick",
+      "server_recommend_scarcity",
+      "server_recommend_survivalchance",
+      "server_recommend_test",
+      "server_recommend_test_base",
+      "server_types_leagueconfig"
+    ],
+    "8": [
+      "vite_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.14814814814814814,
+    "1": 0.08333333333333333,
+    "2": 0.09090909090909091,
+    "3": 0.09523809523809523,
+    "4": 0.17543859649122806,
+    "5": 0.2571428571428571,
+    "6": 0.20952380952380953,
+    "7": 0.34545454545454546,
+    "8": 1.0
+  },
+  "gods": [
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 16
+    },
+    {
+      "id": "server_consensus_consensus",
+      "label": "consensus()",
+      "degree": 11
+    },
+    {
+      "id": "server_import_rankings_importrankings",
+      "label": "importRankings()",
+      "degree": 9
+    },
+    {
+      "id": "server_recommend_recommendationsforpick",
+      "label": "recommendationsForPick()",
+      "degree": 8
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 8
+    },
+    {
+      "id": "server_database_getplayers",
+      "label": "getPlayers()",
+      "degree": 7
+    },
+    {
+      "id": "server_database_normalizename",
+      "label": "normalizeName()",
+      "degree": 6
+    },
+    {
+      "id": "server_import_rankings_refreshplayercatalog",
+      "label": "refreshPlayerCatalog()",
+      "degree": 6
+    },
+    {
+      "id": "server_markdown_parsemarkdownfile",
+      "label": "parseMarkdownFile()",
+      "degree": 6
+    },
+    {
+      "id": "server_types_position",
+      "label": "Position",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "recommendationsForPick()",
+      "target": "consensus()",
+      "source_files": [
+        "server/recommend.ts",
+        "server/consensus.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "liveState()",
+      "target": "getPlayers()",
+      "source_files": [
+        "server/index.ts",
+        "server/database.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "parseMarkdownFile()",
+      "target": "normalizeName()",
+      "source_files": [
+        "server/markdown.ts",
+        "server/database.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "importRankings()",
+      "target": "parseAllMarkdown()",
+      "source_files": [
+        "server/import-rankings.ts",
+        "server/markdown.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "consensus()",
+      "target": "getEntries()",
+      "source_files": [
+        "server/consensus.ts",
+        "server/database.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `devDependencies` connect `devDependencies` to `scripts`?",
+      "why": "High betweenness centrality (0.053) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `SleeperPlayer`, `BoardSuggestion`, `Pick` to the rest of the system?",
+      "why": "61 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `import-rankings.ts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14814814814814814 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `compilerOptions` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `scripts` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09090909090909091 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `devDependencies` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

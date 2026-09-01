@@ -5,7 +5,7 @@ import { clearManualPicks, getEntries, getManualPicks, getPlayers, replaceEntrie
 import { importRankings, resolveEntries } from './import-rankings.js';
 import { parseAllMarkdown } from './markdown.js';
 import { consensus } from './consensus.js';
-import { recommendations, recommendationsForPick, draftSlotForPick } from './recommend.js';
+import { recommendations, recommendationsForPick, draftSlotForPick, detectStrategy, findAdpBargains } from './recommend.js';
 import { connect, getPicks, publicState, getUserLeagues, type UserLeague } from './sleeper.js';
 import type { DraftPick, LeagueConfig } from './types.js';
 const pickSlot = draftSlotForPick;
@@ -95,6 +95,17 @@ app.post('/api/manual-picks', (req, res) => {
   if (![pickNo, sleeperId, rosterId, round, draftSlot].every(Boolean)) return res.status(400).json({ error: 'Tüm seçim alanları gerekli.' });
   saveManualPick(config.draftId, Number(pickNo), String(sleeperId), Number(rosterId), Number(round), Number(draftSlot)); res.json({ ok: true });
 });
+app.get('/api/strategy', async (_req, res, next) => { try { const state = await liveState(); res.json(detectStrategy(state.picks, state.config)); } catch (e) { next(e); } });
+app.get('/api/adp-bargains', async (_req, res, next) => { try { const state = await liveState(); res.json(findAdpBargains(state.picks, state.config)); } catch (e) { next(e); } });
+app.get('/api/player-search', (req, res) => {
+  const query = String(req.query.q ?? '').toLowerCase().trim();
+  const posFilter = String(req.query.position ?? '').toUpperCase().trim();
+  let players = consensus('ppr').filter(p => p.active);
+  if (posFilter && ['QB', 'RB', 'WR', 'TE', 'K', 'DEF'].includes(posFilter)) players = players.filter(p => p.position === posFilter);
+  if (query) players = players.filter(p => p.fullName.toLowerCase().includes(query) || p.normalizedName.includes(query) || (p.team && p.team.toLowerCase().includes(query)));
+  res.json({ players: players.slice(0, 50) });
+});
+app.get('/api/bye-weeks', async (_req, res, next) => { try { const state = await liveState(); const myPicks = state.picks.filter(p => p.rosterId === state.config.myRosterId); const players = getPlayers(); const playerMap = new Map(players.map(p => [p.sleeperId, p])); const byeMap: Record<number, string[]> = {}; for (const pick of myPicks) { const player = playerMap.get(pick.playerId); if (player?.byeWeek && player.position !== 'K' && player.position !== 'DEF') { const week = player.byeWeek; if (!byeMap[week]) byeMap[week] = []; byeMap[week].push(`${player.fullName} (${player.position})`); } } const conflicts = Object.entries(byeMap).filter(([, names]) => names.length >= 2).map(([week, names]) => ({ week: Number(week), players: names, warning: `${names.length} starting player aynı hafta bye!` })); res.json({ byeMap, conflicts }); } catch (e) { next(e); } });
 app.use((error: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => res.status(500).json({ error: error.message }));
 
 const dist = path.resolve('dist');

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState, useCallback } from 'react';
 
 type Position = 'QB' | 'RB' | 'WR' | 'TE' | 'K' | 'DEF';
 type Pick = { playerId: string; playerName: string; position: Position | null; team: string | null; pickNo: number; round: number; draftSlot: number; rosterId: number; isManual?: boolean };
@@ -6,19 +6,47 @@ type State = { config: { draftId: string; name: string; teams: number; rounds: n
 type Rec = { player: { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; tier: string | null; mockAdp: number | null; evidenceCount: number }; score: number; survivalChance: number; reason: string };
 type BoardSuggestion = { rosterId: number; playerId: string; playerName: string; position: Position | null; team: string | null; consensusRank: number; reason: string };
 type UserLeague = { leagueId: string; name: string; season: string; scoringType: string; receptionPoints: number; totalRosters: number; rosterPositions: string[]; draftId?: string; draftStatus?: string };
+type StrategyInfo = { name: string; description: string; strength: number; nextPickAdvice: string };
+type AdpBargain = { player: { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; mockAdp: number | null; tier: string | null }; adpDiff: number; label: string };
+type SearchResult = { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; score: number; tier: string | null; mockAdp: number | null; byeWeek?: number | null };
+type ByeWeekData = { byeMap: Record<number, string[]>; conflicts: { week: number; players: string[]; warning: string }[] };
+
 const api = async <T,>(path: string, options?: RequestInit): Promise<T> => { const r = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options }); const body = await r.json(); if (!r.ok) throw new Error(body.error ?? 'İstek başarısız'); return body; };
+
+const tierColors: Record<string, string> = {
+  '1. Tur': '#ff6b6b', '2. Tur': '#ff8e53', '3. Tur': '#feca57', '4. Tur': '#48dbfb',
+  '5. Tur': '#0abde3', '6. Tur': '#1dd1a1', '7. Tur': '#10ac84', '8. Tur': '#5f27cd',
+  '9. Tur': '#341f97', '10+': '#8395a7',
+};
+const getTierColor = (tier: string | null) => {
+  if (!tier) return '#8395a7';
+  for (const [key, color] of Object.entries(tierColors)) { if (tier.includes(key.replace('. Tur', ''))) return color; }
+  return '#8395a7';
+};
 
 function App() {
   const [state, setState] = useState<State | null>(null);
   const [recs, setRecs] = useState<Rec[]>([]);
   const [boardSuggestions, setBoardSuggestions] = useState<Record<string, BoardSuggestion>>({});
+  const [strategy, setStrategy] = useState<StrategyInfo | null>(null);
+  const [bargains, setBargains] = useState<AdpBargain[]>([]);
+  const [byeData, setByeData] = useState<ByeWeekData | null>(null);
   const [message, setMessage] = useState('Kullanıcı adını gir, liglerini getir, sonra draft modu seç.');
   const [loading, setLoading] = useState(false);
 
   const refresh = async () => {
     if (!state) return;
-    try { const next = await api<State>('/api/draft-state'); setState(next); const [r, suggestions] = await Promise.all([api<{ recommendations: Rec[] }>('/api/recommendations'), api<Record<string, BoardSuggestion>>('/api/board-suggestions')]); setRecs(r.recommendations); setBoardSuggestions(suggestions); }
-    catch (e) { setMessage(e instanceof Error ? e.message : 'Bağlantı güncellenemedi'); }
+    try {
+      const next = await api<State>('/api/draft-state'); setState(next);
+      const [r, suggestions, strat, barg, bye] = await Promise.all([
+        api<{ recommendations: Rec[] }>('/api/recommendations'),
+        api<Record<string, BoardSuggestion>>('/api/board-suggestions'),
+        api<StrategyInfo>('/api/strategy'),
+        api<AdpBargain[]>('/api/adp-bargains'),
+        api<ByeWeekData>('/api/bye-weeks'),
+      ]);
+      setRecs(r.recommendations); setBoardSuggestions(suggestions); setStrategy(strat); setBargains(barg); setByeData(bye);
+    } catch (e) { setMessage(e instanceof Error ? e.message : 'Bağlantı güncellenemedi'); }
   };
   useEffect(() => { if (!state) return; const id = window.setInterval(refresh, 2500); return () => window.clearInterval(id); }, [state]);
   useEffect(() => { if (state) refresh(); }, [state?.config.draftId]);
@@ -37,7 +65,7 @@ function App() {
     </header>
     <Setup onConnect={async form => { setLoading(true); try { const next = await api<State>('/api/connect', { method: 'POST', body: JSON.stringify(form) }); setState(next); setMessage(`${next.config.name} bağlandı (${next.config.scoringType.toUpperCase()}).`); } catch (e) { setMessage(errorMessage(e)); } finally { setLoading(false); } }} onDemo={async (config) => { setLoading(true); try { const next = await api<State>('/api/demo', { method: 'POST', body: JSON.stringify(config) }); setState(next); setMessage(`Demo draftı açıldı (${next.config.scoringType.toUpperCase()}, ${next.config.teams} takım).`); } catch (e) { setMessage(errorMessage(e)); } finally { setLoading(false); } }} />
       <p className="notice">{message}</p>
-      {state && <Dashboard state={state} recs={recs} boardSuggestions={boardSuggestions} myPicks={myPicks} currentPick={currentPick} onRefresh={refresh} onError={setMessage} />}
+      {state && <Dashboard state={state} recs={recs} boardSuggestions={boardSuggestions} myPicks={myPicks} currentPick={currentPick} onRefresh={refresh} onError={setMessage} strategy={strategy} bargains={bargains} byeData={byeData} />}
    
   </main>;
 }
@@ -205,7 +233,7 @@ function Setup({ onConnect, onDemo }: { onConnect: (form: Record<string, unknown
           <h3>Nasıl Çalışır?</h3>
           <ol>
             <li><strong>Kullanıcı adını gir</strong> — Sleeper API'den liglerini çekeriz</li>
-            <li><strong>Lig seç</strong> — PPR/half-PPR/standard, roster, takım sayısı otomatik dolur</li>
+            <li><strong>Lig seç</strong> — PPR/half-PPR/standard, roster, takım sayısı otomatik dolu</li>
             <li><strong>Mod seç</strong> — Canlı (gerçek) veya Mock (simülasyon)</li>
             <li><strong>Başla</strong> — Öneriler, board, kadro hepsi lig ayarlarına göre</li>
           </ol>
@@ -216,8 +244,11 @@ function Setup({ onConnect, onDemo }: { onConnect: (form: Record<string, unknown
             <li>"SIRA SENDE" anlık uyarısı</li>
             <li>5 en iyi öneri (değer + ihtiyaç + nadirlik + hayatta kalma)</li>
             <li>Tüm takımların tahmini pick'leri</li>
-            <li>Sleeper gecikirse manuel yedek seçim</li>
-            <li>21 kaynak, 1934 kayıt consensus</li>
+            <li>Strateji tespiti (Zero RB, Hero RB vs.)</li>
+            <li>ADP fırsatları ve kelepir oyuncular</li>
+            <li>Bye week çakışma uyarısı</li>
+            <li>Tier bazlı renkli gruplandırma</li>
+            <li>Oyuncu arama ve filtreleme</li>
           </ul>
         </div>
       </aside>
@@ -225,7 +256,7 @@ function Setup({ onConnect, onDemo }: { onConnect: (form: Record<string, unknown
   );
 }
 
-function Dashboard({ state, recs, boardSuggestions, myPicks, currentPick, onRefresh, onError }: { state: State; recs: Rec[]; boardSuggestions: Record<string, BoardSuggestion>; myPicks: Pick[]; currentPick: number; onRefresh: () => void; onError: (msg: string) => void }) {
+function Dashboard({ state, recs, boardSuggestions, myPicks, currentPick, onRefresh, onError, strategy, bargains, byeData }: { state: State; recs: Rec[]; boardSuggestions: Record<string, BoardSuggestion>; myPicks: Pick[]; currentPick: number; onRefresh: () => void; onError: (msg: string) => void; strategy: StrategyInfo | null; bargains: AdpBargain[]; byeData: ByeWeekData | null }) {
   const isMyTurn = !state.finished && currentPick <= state.config.teams * state.config.rounds && pickSlot(currentPick, state.config.teams) === mySlot(state);
   const onClockSlot = currentPick <= state.config.teams * state.config.rounds ? pickSlot(currentPick, state.config.teams) : null;
   const onClockRoster = onClockSlot ? state.config.slotToRosterId[String(onClockSlot)] : null;
@@ -238,14 +269,145 @@ function Dashboard({ state, recs, boardSuggestions, myPicks, currentPick, onRefr
       <Metric label="Senin slotun" value={`#${mySlot(state) ?? '—'}`} />
       <Metric label="Skor formatı" value={state.config.scoringType.toUpperCase()} />
     </section>
+
+    {strategy && strategy.name !== 'Early Rounds' && (
+      <div className="strategy-banner">
+        <div className="strategy-info">
+          <span className="strategy-label">Stratejin:</span>
+          <span className="strategy-name" style={{ color: strategy.strength > 70 ? '#6de2af' : strategy.strength > 40 ? '#feca57' : '#ff6b6b' }}>{strategy.name}</span>
+          <span className="strategy-desc">{strategy.description}</span>
+        </div>
+        <div className="strategy-advice">
+          <small>Öneri:</small> {strategy.nextPickAdvice}
+        </div>
+        <div className="strategy-bar"><div className="strategy-fill" style={{ width: `${Math.min(100, strategy.strength)}%`, background: strategy.strength > 70 ? '#6de2af' : strategy.strength > 40 ? '#feca57' : '#ff6b6b' }}></div></div>
+      </div>
+    )}
+
     {isMyTurn && <div className="your-turn">SIRA SENDE — en üstteki öneriyi kontrol et ve Sleeper'dan manuel seç.</div>}
+
+    {byeData && byeData.conflicts.length > 0 && (
+      <div className="bye-warning">
+        <strong>⚠️ Bye Week Çakışması!</strong>
+        {byeData.conflicts.map(c => (
+          <div key={c.week} className="bye-conflict">
+            <span className="bye-week-badge">Hafta {c.week}</span>
+            {c.players.join(', ')} — {c.warning}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {bargains.length > 0 && (
+      <section className="bargains-section">
+        <h2>ADP Fırsatları</h2>
+        <div className="bargains-grid">
+          {bargains.map(b => (
+            <div className={`bargain-card ${b.adpDiff >= 20 ? 'mega' : b.adpDiff >= 12 ? 'big' : ''}`} key={b.player.sleeperId}>
+              <div className="bargain-rank">#{b.player.consensusRank}</div>
+              <div className="bargain-info">
+                <strong>{b.player.fullName}</strong>
+                <small>{b.player.position} · {b.player.team ?? 'FA'} · ADP #{b.player.mockAdp}</small>
+              </div>
+              <div className="bargain-diff">
+                <span className="diff-badge">-{b.adpDiff}</span>
+                <span className="diff-label">{b.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     <section className="grid">
-      <article className="panel recommendations"><h2>Şimdi Al</h2>{recs.map((rec, i) => <div className={`recommendation ${i === 0 ? 'best' : ''}`} key={rec.player.sleeperId}><span className="rank">{i + 1}</span><div><strong>{rec.player.fullName}</strong><small>{rec.player.position} · {rec.player.team ?? 'FA'} · Consensus #{rec.player.consensusRank} {rec.player.tier ? `· ${rec.player.tier}` : ''}</small><p>{rec.reason}</p></div><div className="score"><b>{Math.round(rec.score)}</b><small>Skor<br />{Math.round(rec.survivalChance * 100)}% kalır</small></div></div>)}</article>
-      <article className="panel"><h2>Senin Kadro</h2><div className="position-counts">{Object.entries(counts).map(([position, count]) => <span key={position}><b>{position}</b><strong>{count}</strong></span>)}</div><h3>Lig Ayarı</h3><p>{state.config.teams} takım · {state.config.rounds} tur · {state.config.rosterPositions.join(', ') || 'Sleeper roster slotu bekleniyor'}</p>{state.config.mode === 'demo' ? <DemoControls onReset={onRefresh} onFinish={onRefresh} finished={state.finished} onSimulate={async () => { try { await api('/api/mock-simulate', { method: 'POST' }); onRefresh(); } catch (e) { onError(errorMessage(e)); } }} /> : <p className="live-note">Canlı draft verisiyle güncelleniyor (2.5 sn).</p>}<ManualPick state={state} currentPick={currentPick} onSaved={onRefresh} /></article>
+      <article className="panel recommendations">
+        <h2>Şimdi Al</h2>
+        {recs.map((rec, i) => (
+          <div className={`recommendation ${i === 0 ? 'best' : ''}`} key={rec.player.sleeperId}>
+            <span className="rank">{i + 1}</span>
+            <div>
+              <div className="rec-header">
+                <strong>{rec.player.fullName}</strong>
+                {rec.player.tier && <span className="tier-badge" style={{ background: getTierColor(rec.player.tier) + '22', color: getTierColor(rec.player.tier), borderColor: getTierColor(rec.player.tier) + '44' }}>{rec.player.tier}</span>}
+              </div>
+              <small>{rec.player.position} · {rec.player.team ?? 'FA'} · Consensus #{rec.player.consensusRank} {rec.player.mockAdp ? `· ADP #${rec.player.mockAdp}` : ''}</small>
+              <p>{rec.reason}</p>
+            </div>
+            <div className="score"><b>{Math.round(rec.score)}</b><small>Skor<br />{Math.round(rec.survivalChance * 100)}% kalır</small></div>
+          </div>
+        ))}
+      </article>
+      <article className="panel">
+        <h2>Senin Kadro</h2>
+        <div className="position-counts">
+          {Object.entries(counts).map(([position, count]) => <span key={position}><b>{position}</b><strong>{count}</strong></span>)}
+        </div>
+        <h3>Lig Ayarı</h3>
+        <p>{state.config.teams} takım · {state.config.rounds} tur · {state.config.rosterPositions.join(', ') || 'Sleeper roster slotu bekleniyor'}</p>
+        {state.config.mode === 'demo' ? <DemoControls onReset={onRefresh} onFinish={onRefresh} finished={state.finished} onSimulate={async () => { try { await api('/api/mock-simulate', { method: 'POST' }); onRefresh(); } catch (e) { onError(errorMessage(e)); } }} /> : <p className="live-note">Canlı draft verisiyle güncelleniyor (2.5 sn).</p>}
+        <ManualPick state={state} currentPick={currentPick} onSaved={onRefresh} />
+      </article>
     </section>
+
+    <PlayerSearchPanel state={state} />
     <DraftBoard state={state} currentPick={currentPick} suggestions={boardSuggestions} />
   </>;
 }
+
+function PlayerSearchPanel({ state }: { state: State }) {
+  const [query, setQuery] = useState('');
+  const [posFilter, setPosFilter] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const taken = useMemo(() => new Set(state.picks.map(p => p.playerId)), [state.picks]);
+
+  const search = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (query) params.set('q', query);
+      if (posFilter) params.set('position', posFilter);
+      const data = await api<{ players: SearchResult[] }>(`/api/player-search?${params}`);
+      setResults(data.players.filter(p => !taken.has(p.sleeperId)));
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  }, [query, posFilter, taken]);
+
+  useEffect(() => { const id = setTimeout(search, 300); return () => clearTimeout(id); }, [query, posFilter]);
+
+  return (
+    <section className="player-search">
+      <h2>Oyuncu Ara</h2>
+      <div className="search-controls">
+        <input value={query} onChange={e => setQuery(e.target.value)} placeholder="İsim veya takım ara..." className="search-input" />
+        <div className="pos-filters">
+          {['', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'].map(pos => (
+            <button key={pos} className={`pos-btn ${posFilter === pos ? 'active' : ''}`} onClick={() => setPosFilter(pos)}>{pos || 'Tümü'}</button>
+          ))}
+        </div>
+      </div>
+      {loading && <p className="search-loading">Aranıyor...</p>}
+      <div className="search-results">
+        {results.slice(0, 20).map(p => (
+          <div className={`search-card ${taken.has(p.sleeperId) ? 'taken' : ''}`} key={p.sleeperId}>
+            <div className="search-rank">#{p.consensusRank}</div>
+            <div className="search-info">
+              <strong>{p.fullName}</strong>
+              <small>{p.position} · {p.team ?? 'FA'}</small>
+            </div>
+            <div className="search-meta">
+              {p.tier && <span className="tier-tag" style={{ color: getTierColor(p.tier) }}>{p.tier}</span>}
+              {p.mockAdp && <span className="adp-tag">ADP #{p.mockAdp}</span>}
+              {p.byeWeek && p.position !== 'K' && p.position !== 'DEF' && <span className="bye-tag">Bye {p.byeWeek}</span>}
+            </div>
+          </div>
+        ))}
+        {results.length === 0 && !loading && <p className="search-empty">Sonuç bulunamadı.</p>}
+      </div>
+    </section>
+  );
+}
+
 const Metric = ({ label, value }: { label: string; value: string }) => <div><small>{label}</small><b>{value}</b></div>;
 function DraftBoard({ state, currentPick, suggestions }: { state: State; currentPick: number; suggestions: Record<string, BoardSuggestion> }) {
   const picks = new Map(state.picks.map(p => [`${p.round}-${p.draftSlot}`, p]));

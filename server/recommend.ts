@@ -1,5 +1,5 @@
 import { consensus } from './consensus.js';
-import type { ConsensusPlayer, DraftPick, LeagueConfig, Position, Recommendation } from './types.js';
+import type { AdpBargain, ConsensusPlayer, DraftPick, LeagueConfig, Position, Recommendation, StrategyInfo } from './types.js';
 
 const draftSlotForPick = (pickNo: number, teams: number) => {
   const round = Math.ceil(pickNo / teams); const within = (pickNo - 1) % teams + 1;
@@ -78,4 +78,45 @@ export function recommendationsForPick(picks: DraftPick[], config: LeagueConfig,
     return { player, score, valueScore, needScore, scarcityScore, survivalScore, survivalChance: chanceToSurvive, reason: `${needText}; ${riskText}.` };
   });
   return { nextPick, recommendations: rows.sort((a, b) => b.score - a.score).slice(0, 5) };
+}
+
+export function detectStrategy(picks: DraftPick[], config: LeagueConfig): StrategyInfo {
+  const myPicks = picks.filter(p => p.rosterId === config.myRosterId);
+  const counts = { QB: 0, RB: 0, WR: 0, TE: 0, K: 0, DEF: 0 } as Record<Position, number>;
+  myPicks.forEach(p => { if (p.position) counts[p.position]++; });
+  const total = myPicks.length || 1;
+  const rbPct = counts.RB / total;
+  const wrPct = counts.WR / total;
+  const tePct = counts.TE / total;
+  const qbPct = counts.QB / total;
+  const earlyPicks = myPicks.filter(p => p.round <= 3);
+  const earlyRB = earlyPicks.filter(p => p.position === 'RB').length;
+  const earlyWR = earlyPicks.filter(p => p.position === 'WR').length;
+
+  if (earlyRB >= 2 && counts.RB >= 3) return { name: 'Hero RB', description: 'Erken roundlarda 2+ RB seçip sonra WR ağırlıklı devam ediyorsun.', strength: Math.min(100, Math.round(rbPct * 200)), nextPickAdvice: 'WR veya TE cozyoglari tamamla, elite WR hedefle.' };
+  if (earlyRB === 0 && earlyWR >= 2 && counts.RB <= 1) return { name: 'Zero RB', description: 'RB geç başladın, WR ağırlıklı gidiyorsun.', strength: Math.min(100, Math.round(wrPct * 200)), nextPickAdvice: 'Değerli RB\'ler düşmüş olabilir, fırsat kovala.' };
+  if (earlyRB === 1 && earlyWR >= 2) return { name: 'Modified Zero RB', description: '1 erken RB ile başladın, ağırlık WR\'de.', strength: Math.min(100, Math.round(wrPct * 180)), nextPickAdvice: 'RB derinliği tükendiğindeprise queenkeeper.' };
+  if (counts.WR >= 4 && counts.RB <= 2) return { name: 'WR Heavy', description: 'Çok fazla WR seçtin, RB zayıf kalabilir.', strength: Math.min(100, Math.round(wrPct * 200)), nextPickAdvice: 'Artık RB odaklan, değerli RB\'leri yakala.' };
+  if (counts.TE >= 2 && earlyPicks.some(p => p.position === 'TE')) return { name: 'TE Premium', description: 'Erken TE seçtin, avantajı kullan.', strength: Math.min(100, Math.round(tePct * 300 + 30)), nextPickAdvice: 'TE avantajını koru, diğer pozisyonları dengele.' };
+  if (counts.QB >= 2) return { name: 'QB Heavy', description: 'Çok fazla QB seçtin, diğer pozisyonlar zayıf.', strength: Math.min(100, Math.round(qbPct * 250 + 20)), nextPickAdvice: 'QB sayısını azalt, RB/WR odaklan.' };
+  if (rbPct >= .3 && wrPct >= .3) return { name: 'Balanced', description: 'RB ve WR arasında dengeli gidiyorsun.', strength: 60, nextPickAdvice: 'BPA stratejisi ile devam et, ihtiyaç-based karar ver.' };
+  return { name: 'Early Rounds', description: 'Henüz yeterli pick yok, strateji belirleniyor.', strength: 20, nextPickAdvice: 'İlk 3-4 pick\'e kadar strateji netleşmez.' };
+}
+
+export function findAdpBargains(picks: DraftPick[], config: LeagueConfig): AdpBargain[] {
+  const ranked = consensus(config.scoringType);
+  const taken = new Set(picks.map(p => p.playerId));
+  const available = ranked.filter(p => !taken.has(p.sleeperId) && p.active && p.mockAdp);
+  const bargains: AdpBargain[] = [];
+  for (const player of available.slice(0, 80)) {
+    const adpDiff = player.consensusRank - (player.mockAdp ?? player.consensusRank);
+    if (adpDiff >= 8) {
+      let label = 'Büyük Fırsat';
+      if (adpDiff >= 20) label = 'Devasa Fırsat';
+      else if (adpDiff >= 12) label = 'Büyük Fırsat';
+      else label = 'Fırsat';
+      bargains.push({ player, adpDiff: Math.round(adpDiff), label });
+    }
+  }
+  return bargains.sort((a, b) => b.adpDiff - a.adpDiff).slice(0, 8);
 }
