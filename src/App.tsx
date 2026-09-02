@@ -6,7 +6,8 @@ type State = { config: { draftId: string; name: string; teams: number; rounds: n
 type Rec = { player: { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; tier: string | null; mockAdp: number | null; evidenceCount: number }; score: number; survivalChance: number; reason: string };
 type BoardSuggestion = { rosterId: number; playerId: string; playerName: string; position: Position | null; team: string | null; consensusRank: number; reason: string };
 type UserLeague = { leagueId: string; name: string; season: string; scoringType: string; receptionPoints: number; totalRosters: number; rosterPositions: string[]; draftId?: string; draftStatus?: string };
-type StrategyInfo = { name: string; description: string; strength: number; nextPickAdvice: string };
+type StrategyInfo = { name: string; description: string; strength: number; nextPickAdvice: string; selectedId?: string };
+type StrategyOption = { id: string; name: string; description: string };
 type AdpBargain = { player: { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; mockAdp: number | null; tier: string | null }; adpDiff: number; label: string };
 type SearchResult = { sleeperId: string; fullName: string; position: Position | null; team: string | null; consensusRank: number; score: number; tier: string | null; mockAdp: number | null; byeWeek?: number | null };
 type ByeWeekData = { byeMap: Record<number, string[]>; conflicts: { week: number; players: string[]; warning: string }[] };
@@ -81,13 +82,27 @@ function Setup({ onConnect, onDemo }: { onConnect: (form: Record<string, unknown
   const [fetching, setFetching] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [stepMessage, setStepMessage] = useState('');
+  const [directDraftId, setDirectDraftId] = useState('');
+  const [directRosterId, setDirectRosterId] = useState('');
+
+  const connectByDraftId = () => {
+    const raw = directDraftId.trim();
+    const id = raw.includes('/') ? (raw.split('?')[0].split('/').filter(Boolean).pop() ?? raw) : raw.split('?')[0];
+    if (!id) { setStepMessage('Draft ID veya draft linki gir.'); return; }
+    setSubmitting(true);
+    try {
+      const payload: Record<string, unknown> = { draftId: id, username: username.trim() || undefined };
+      if (directRosterId.trim()) payload.myRosterId = Number(directRosterId.trim());
+      onConnect(payload);
+    } finally { setSubmitting(false); }
+  };
 
   const fetchLeagues = async () => {
     setFetching(true); setStepMessage('Ligler getiriliyor...');
     try {
       const data = await api<UserLeague[]>(`/api/user-leagues?username=${encodeURIComponent(username)}`);
       setLeagues(data);
-      if (data.length === 0) { setStepMessage('Bu kullanıcı için aktif lig bulunamadı (2025 sezonu).'); }
+      if (data.length === 0) { setStepMessage(`Bu kullanıcı için aktif lig bulunamadı (${new Date().getFullYear()} sezonu).`); }
       else { setStep('leagues'); setStepMessage(`${data.length} lig bulundu. Birini seç.`); }
     } catch (e) { setStepMessage(errorMessage(e)); }
     finally { setFetching(false); }
@@ -132,6 +147,24 @@ function Setup({ onConnect, onDemo }: { onConnect: (form: Record<string, unknown
               {fetching ? <><span className="spinner" aria-hidden="true"></span>Yükleniyor...</> : 'Ligleri Getir'}
             </button>
             {stepMessage && <p className="step-hint">{stepMessage}</p>}
+
+            <div className="info-divider"></div>
+            <p className="step-desc">Mock draft mı yapıyorsun? Lig listesinde çıkmaz — <strong>draft linkini/ID'sini</strong> buraya yapıştır.</p>
+            <div className="input-group">
+              <label>
+                <span>Draft ID veya link</span>
+                <input value={directDraftId} onChange={e => setDirectDraftId(e.target.value)} placeholder="https://sleeper.com/draft/nfl/1400565179367817216" disabled={submitting} />
+              </label>
+            </div>
+            <div className="input-group">
+              <label>
+                <span>Kendi Roster ID (kullanıcı adıyla bulunamazsa)</span>
+                <input type="number" value={directRosterId} onChange={e => setDirectRosterId(e.target.value)} placeholder="Örn: 6" disabled={submitting} />
+              </label>
+            </div>
+            <button className="btn-primary" onClick={connectByDraftId} disabled={submitting || !directDraftId.trim()} aria-busy={submitting}>
+              {submitting ? <><span className="spinner" aria-hidden="true"></span>Bağlanıyor...</> : 'Draft ID ile Canlı Bağlan'}
+            </button>
           </div>
         )}
 
@@ -262,13 +295,45 @@ function Dashboard({ state, recs, boardSuggestions, myPicks, currentPick, onRefr
   const onClockRoster = onClockSlot ? state.config.slotToRosterId[String(onClockSlot)] : null;
   const onClockName = onClockRoster ? state.config.rosterNames[String(onClockRoster)] ?? `Takım ${onClockSlot}` : 'Draft bitti';
   const counts = Object.fromEntries(['QB', 'RB', 'WR', 'TE', 'K', 'DEF'].map(position => [position, myPicks.filter(p => p.position === position).length]));
+  const [stratOpts, setStratOpts] = useState<StrategyOption[]>([]);
+  const [askStrategy, setAskStrategy] = useState(true);
+  const [savingStrat, setSavingStrat] = useState(false);
+  useEffect(() => { api<StrategyOption[]>('/api/strategies').then(setStratOpts).catch(() => {}); }, []);
+  const chooseStrategy = async (id: string) => {
+    setSavingStrat(true);
+    try { await api('/api/strategy', { method: 'POST', body: JSON.stringify({ id }) }); setAskStrategy(false); onRefresh(); }
+    catch (e) { onError(errorMessage(e)); }
+    finally { setSavingStrat(false); }
+  };
+  const currentStratName = stratOpts.find(o => o.id === (strategy?.selectedId ?? 'bpa'))?.name ?? 'Taktik Yok (BPA)';
   return <>
+    {askStrategy && stratOpts.length > 0 && (
+      <div className="strat-modal-backdrop" onClick={() => setAskStrategy(false)}>
+        <div className="strat-modal" onClick={e => e.stopPropagation()}>
+          <h2>Bu draft için taktiğini seç</h2>
+          <p className="strat-modal-sub">İstersen taktiksiz başla; draft sırasında bu pencereyi tekrar açıp değiştirebilirsin. Öneriler seçtiğin plana göre ağırlıklandırılır.</p>
+          <div className="strat-list">
+            {stratOpts.map(o => (
+              <button key={o.id} className={`strat-card ${(strategy?.selectedId ?? 'bpa') === o.id ? 'active' : ''}`} disabled={savingStrat} onClick={() => chooseStrategy(o.id)}>
+                <strong>{o.name}</strong>
+                <span>{o.description}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
     <section className="metrics">
       <Metric label="Şu anki pick" value={state.finished ? 'Bitti' : `${Math.ceil(currentPick / state.config.teams)}.${String((currentPick - 1) % state.config.teams + 1).padStart(2, '0')}`} />
       <Metric label="Sıra kimde" value={state.finished ? 'Draft bitti' : onClockName} />
       <Metric label="Senin slotun" value={`#${mySlot(state) ?? '—'}`} />
       <Metric label="Skor formatı" value={state.config.scoringType.toUpperCase()} />
     </section>
+
+    <div className="strat-chip">
+      <span>Taktik: <strong>{currentStratName}</strong></span>
+      <button onClick={() => setAskStrategy(true)}>Değiştir</button>
+    </div>
 
     {strategy && strategy.name !== 'Early Rounds' && (
       <div className="strategy-banner">

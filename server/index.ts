@@ -5,7 +5,7 @@ import { clearManualPicks, getEntries, getManualPicks, getPlayers, replaceEntrie
 import { importRankings, resolveEntries } from './import-rankings.js';
 import { parseAllMarkdown } from './markdown.js';
 import { consensus } from './consensus.js';
-import { recommendations, recommendationsForPick, draftSlotForPick, detectStrategy, findAdpBargains } from './recommend.js';
+import { recommendations, recommendationsForPick, draftSlotForPick, detectStrategy, findAdpBargains, STRATEGIES } from './recommend.js';
 import { connect, getPicks, publicState, getUserLeagues, type UserLeague } from './sleeper.js';
 import type { DraftPick, LeagueConfig } from './types.js';
 const pickSlot = draftSlotForPick;
@@ -16,6 +16,7 @@ let cachedPicks: DraftPick[] = [];
 let lastFetch = 0;
 let dataLoad: Promise<unknown> | null = null;
 let demoFinished = false;
+let activeStrategy = 'bpa';
 
 async function ensureRankings() {
   if (getEntries().length) return;
@@ -25,6 +26,7 @@ async function ensureRankings() {
 
 async function liveState() {
   if (!config) throw new Error('Önce bir Sleeper draftına bağlan.');
+  config.strategy = activeStrategy;
   let live = true; let error: string | undefined;
   if (Date.now() - lastFetch > 1800) {
     try { cachedPicks = await getPicks(config.draftId, config.slotToRosterId); lastFetch = Date.now(); }
@@ -61,7 +63,7 @@ app.post('/api/review', (req, res) => {
   saveAlias(alias, sleeperId); replaceEntries(resolveEntries(parseAllMarkdown(), getPlayers())); res.json({ ok: true, message: 'Eşleşme kaydedildi ve ranking güncellendi.' });
 });
 app.get('/api/consensus', (req, res) => res.json(consensus(String(req.query.scoringType ?? 'ppr'))));
-app.post('/api/connect', async (req, res, next) => { try { await ensureRankings(); const { leagueId, draftId, username, myRosterId } = req.body ?? {}; if (leagueId) { config = (await connect({ leagueId, username, myRosterId })).config; } else if (draftId) { config = (await connect({ draftId, username, myRosterId })).config; } else { throw new Error('League ID veya Draft ID gerekli'); } demoFinished = false; cachedPicks = []; lastFetch = 0; res.json(await liveState()); } catch (e) { next(e); } });
+app.post('/api/connect', async (req, res, next) => { try { await ensureRankings(); const { leagueId, draftId, username, myRosterId } = req.body ?? {}; if (leagueId) { config = (await connect({ leagueId, username, myRosterId })).config; } else if (draftId) { config = (await connect({ draftId, username, myRosterId })).config; } else { throw new Error('League ID veya Draft ID gerekli'); } demoFinished = false; cachedPicks = []; lastFetch = 0; activeStrategy = 'bpa'; res.json(await liveState()); } catch (e) { next(e); } });
 app.post('/api/demo', async (req, res) => {
   await ensureRankings();
   const { leagueId, username, scoringType = 'ppr', receptionPoints = 1, rosterPositions = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'K', 'DEF'], totalRosters = 12 } = req.body ?? {};
@@ -81,7 +83,7 @@ app.get('/api/board-suggestions', async (_req, res, next) => {
   try {
     const state = await liveState(); const suggestions: Record<string, unknown> = {};
     for (const rosterId of Object.values(state.config.slotToRosterId)) {
-      const result = recommendations(state.picks, { ...state.config, myRosterId: Number(rosterId) }); const top = result.recommendations[0];
+      const result = recommendations(state.picks, { ...state.config, myRosterId: Number(rosterId), strategy: Number(rosterId) === state.config.myRosterId ? state.config.strategy : 'bpa' }); const top = result.recommendations[0];
       if (top) suggestions[String(rosterId)] = { rosterId, playerId: top.player.sleeperId, playerName: top.player.fullName, position: top.player.position, team: top.player.team, consensusRank: top.player.consensusRank, reason: top.reason };
     }
     res.json(suggestions);
@@ -95,7 +97,25 @@ app.post('/api/manual-picks', (req, res) => {
   if (![pickNo, sleeperId, rosterId, round, draftSlot].every(Boolean)) return res.status(400).json({ error: 'Tüm seçim alanları gerekli.' });
   saveManualPick(config.draftId, Number(pickNo), String(sleeperId), Number(rosterId), Number(round), Number(draftSlot)); res.json({ ok: true });
 });
-app.get('/api/strategy', async (_req, res, next) => { try { const state = await liveState(); res.json(detectStrategy(state.picks, state.config)); } catch (e) { next(e); } });
+app.get('/api/strategies', (_req, res) => res.json(STRATEGIES));
+app.post('/api/strategy', (req, res) => {
+  const id = String(req.body?.id ?? '').trim();
+  if (!STRATEGIES.some(s => s.id === id)) return res.status(400).json({ error: 'Geçersiz strateji.' });
+  activeStrategy = id;
+  res.json({ ok: true, strategy: id });
+});
+app.get('/api/strategy', async (_req, res, next) => {
+  try {
+    const state = await liveState();
+    const detected = detectStrategy(state.picks, state.config);
+    const selected = STRATEGIES.find(s => s.id === activeStrategy);
+    if (selected && selected.id !== 'bpa') {
+      res.json({ name: selected.name, description: selected.description, strength: 100, nextPickAdvice: detected.name !== 'Early Rounds' && detected.name !== selected.name ? `Dikkat: picklerin "${detected.name}" görünüyor, seçtiğin plandan sapıyorsun.` : 'Öneriler seçtiğin plana göre ağırlıklandırılıyor.', selectedId: selected.id });
+    } else {
+      res.json({ ...detected, selectedId: 'bpa' });
+    }
+  } catch (e) { next(e); }
+});
 app.get('/api/adp-bargains', async (_req, res, next) => { try { const state = await liveState(); res.json(findAdpBargains(state.picks, state.config)); } catch (e) { next(e); } });
 app.get('/api/player-search', (req, res) => {
   const query = String(req.query.q ?? '').toLowerCase().trim();

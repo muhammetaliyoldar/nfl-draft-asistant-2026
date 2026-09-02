@@ -1,5 +1,44 @@
 import { consensus } from './consensus.js';
-import type { AdpBargain, ConsensusPlayer, DraftPick, LeagueConfig, Position, Recommendation, StrategyInfo } from './types.js';
+import type { AdpBargain, ConsensusPlayer, DraftPick, LeagueConfig, Position, Recommendation, StrategyInfo, StrategyOption } from './types.js';
+
+export const STRATEGIES: StrategyOption[] = [
+  { id: 'bpa', name: 'Taktik Yok (BPA)', description: 'En iyi mevcut oyuncu. Değer, ihtiyaç ve pozisyon nadirliği dengelenir; pozisyon zorlaması yok. Kararsızsan bununla başla.' },
+  { id: 'robust_rb', name: 'Robust RB', description: 'İlk 2-3 turda RB pozisyonunu kilitle. RB erken tükendiği için güvenli taban; sonra WR/TE ile dengele.' },
+  { id: 'hero_rb', name: 'Hero RB', description: '1. turda tek bir elite RB al, sonra 4-5 tur WR/TE ağırlık ver, RB derinliğine geç dön. Tek RB\'ye bağımlılık riski var.' },
+  { id: 'zero_rb', name: 'Zero RB', description: 'İlk ~5 tur RB alma; elite WR/TE (ve gerekirse QB) yığ. RB\'leri 5. turdan sonra düşen değerden ve yüksek-upside isimlerden topla.' },
+  { id: 'wr_heavy', name: 'WR Ağırlıklı', description: 'PPR\'de WR öncelikli kadro kur. RB\'yi FLEX ve bench derinliğinden idare et. WR bolluğunu kullanır.' },
+  { id: 'te_premium', name: 'TE Premium', description: 'İlk 3-4 turda elite bir TE (McBride, Bowers, LaPorta vb.) al ve haftalık pozisyon avantajı yarat. Tek TE alıp geçersin.' },
+];
+
+// Stratejiye göre pozisyon skoruna çarpan. round: sıradaki pickin turu, counts: kendi kadrondaki pozisyon sayıları, rank: oyuncunun consensus sırası.
+function strategyMultiplier(strategyId: string | undefined, position: Position | null, round: number, counts: Record<string, number>, rank = 999): number {
+  if (!strategyId || strategyId === 'bpa' || !position) return 1;
+  const rb = counts.RB ?? 0, wr = counts.WR ?? 0, te = counts.TE ?? 0;
+  switch (strategyId) {
+    case 'robust_rb':
+      if (position === 'RB') return rb >= 3 ? 0.82 : round <= 3 ? 1.28 : 1.08;
+      if (round <= 3 && (position === 'WR' || position === 'TE')) return 0.9;
+      return 1;
+    case 'hero_rb':
+      if (position === 'RB') { if (round === 1) return 1.22; if (rb >= 1 && round <= 5) return 0.65; return 1.18; }
+      if ((position === 'WR' || position === 'TE') && round >= 2 && round <= 5) return 1.15;
+      return 1;
+    case 'zero_rb':
+      if (position === 'RB') return round <= 5 ? 0.5 : 1.3;
+      if ((position === 'WR' || position === 'TE') && round <= 5) return 1.18;
+      return 1;
+    case 'wr_heavy':
+      if (position === 'WR') return wr >= 5 ? 1.0 : 1.2;
+      if (position === 'RB') return rb >= 2 ? 1.05 : 0.85;
+      return 1;
+    case 'te_premium':
+      if (position === 'TE') { if (te >= 1) return 0.6; if (round <= 4 && rank <= 45) return 1.22; if (round <= 6 && rank <= 70) return 1.1; return 1.0; }
+      return 1;
+    default:
+      return 1;
+  }
+}
+export { strategyMultiplier };
 
 const draftSlotForPick = (pickNo: number, teams: number) => {
   const round = Math.ceil(pickNo / teams); const within = (pickNo - 1) % teams + 1;
@@ -66,16 +105,22 @@ export function recommendationsForPick(picks: DraftPick[], config: LeagueConfig,
   const myPicks = picks.filter(p => p.rosterId === config.myRosterId);
   const afterMyPick = nextPick ? nextPick + (config.teams * 2 - 1) : picks.length;
   const picksUntilNext = Math.max(0, afterMyPick - (nextPick ?? picks.length) - 1);
+  const myRound = nextPick ? Math.ceil(nextPick / config.teams) : myPicks.length + 1;
+  const counts = Object.fromEntries(['QB', 'RB', 'WR', 'TE', 'K', 'DEF'].map(p => [p, 0])) as Record<string, number>;
+  myPicks.forEach(p => { if (p.position) counts[p.position]++; });
   const rows = available.map(player => {
     const valueScore = player.score;
     const needScore = player.position ? positionNeeded(player.position, myPicks, config) : 0;
     const scarcityScore = scarcity(player, available);
     const chanceToSurvive = survivalChance(player, available, picksUntilNext);
     const survivalScore = (1 - chanceToSurvive) * 100;
-    const score = valueScore * .45 + needScore * .2 + scarcityScore * .2 + survivalScore * .15;
+    const base = valueScore * .45 + needScore * .2 + scarcityScore * .2 + survivalScore * .15;
+    const stratMult = strategyMultiplier(config.strategy, player.position, myRound, counts, player.consensusRank);
+    const score = base * stratMult;
     const needText = needScore >= 55 ? `${player.position} başlangıç kadrosunda açık var` : 'değer ve tier avantajı';
     const riskText = chanceToSurvive < .35 ? 'bir sonraki seçimine kalma ihtimali düşük' : 'bir tur bekleyebilir';
-    return { player, score, valueScore, needScore, scarcityScore, survivalScore, survivalChance: chanceToSurvive, reason: `${needText}; ${riskText}.` };
+    const stratText = stratMult >= 1.1 ? ` (${config.strategy} planına uygun)` : stratMult <= 0.9 ? ` (${config.strategy} planına ters)` : '';
+    return { player, score, valueScore, needScore, scarcityScore, survivalScore, survivalChance: chanceToSurvive, reason: `${needText}; ${riskText}${stratText}.` };
   });
   return { nextPick, recommendations: rows.sort((a, b) => b.score - a.score).slice(0, 5) };
 }

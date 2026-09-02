@@ -78,6 +78,13 @@ export interface LeagueConfig {
   slotToRosterId: Record<string, number>;
   rosterNames: Record<string, string>;
   mode?: 'live' | 'demo';
+  strategy?: string;
+}
+
+export interface StrategyOption {
+  id: string;
+  name: string;
+  description: string;
 }
 
 export interface DraftState {
